@@ -20,7 +20,7 @@ resource virtualNetwork 'Microsoft.Network/virtualNetworks@2022-11-01' = {
         '10.0.0.0/16'
       ]
     }
-    subnet:[
+    subnets:[
       {
         name:'subnet-1'
         properties:{
