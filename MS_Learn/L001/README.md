@@ -1,0 +1,1 @@
+[初めての Bicep テンプレートを作成する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/build-first-bicep-template/) で使用したファイルを置いています
