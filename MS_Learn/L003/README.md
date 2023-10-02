@@ -1,0 +1,1 @@
+[条件とループを使用して柔軟な Bicep テンプレートを作成する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/build-flexible-bicep-templates-conditions-loops/) で使用したファイルを置いています
