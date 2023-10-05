@@ -120,3 +120,18 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
     }
   }
 }
+
+resource bginfoExtension 'Microsoft.Compute/virtualMachines/extensions@2021-03-01' = {
+  name: 'BGInfo'
+  location: location
+  parent: vm
+  properties: {
+    publisher: 'Microsoft.Compute'
+    type: 'BGInfo'
+    typeHandlerVersion: '2.1'
+    autoUpgradeMinorVersion: true
+    settings: {
+      logonTrigger: true
+    }
+  }
+}
