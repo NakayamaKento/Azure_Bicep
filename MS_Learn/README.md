@@ -10,3 +10,9 @@ Microsoft Learn で使ったファイルを置いています
 
 ## L002
 [パラメーターを使用して再利用可能な Bicep テンプレートを構築する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/build-reusable-bicep-templates-parameters/)
+
+## L003
+
+
+## L005
+[Bicep を使用して子と拡張機能のリソースをデプロイする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/child-extension-bicep-templates/)

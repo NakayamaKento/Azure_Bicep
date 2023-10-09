@@ -1,0 +1,1 @@
+[Bicep を使用して子と拡張機能のリソースをデプロイする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/child-extension-bicep-templates/) で使用したファイルを置いています
