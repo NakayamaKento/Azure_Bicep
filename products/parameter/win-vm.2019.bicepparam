@@ -1,4 +1,4 @@
-using './win-vm.bicep'
+using '../modules/win-vm.bicep'
 
 param vmName = 'win2019-vm'
 param vmimageversion = '17763.4737.230802'
