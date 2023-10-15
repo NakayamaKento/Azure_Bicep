@@ -1,0 +1,1 @@
+[コラボレーションのための Bicep コードの構築 - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/structure-bicep-code-collaboration/) で使用したファイルを置いています
