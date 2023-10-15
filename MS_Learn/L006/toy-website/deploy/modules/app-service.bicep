@@ -1,18 +1,18 @@
-@descprption('The Azur region into which the resources should be deployed')
-param locatin string
+@description('The Azure region into which the resources should be deployed.')
+param location string
 
-@descprption('The type of environment. This must be non-prod or prod')
+@description('The type of environment. This must be nonprod or prod.')
 @allowed([
-    'non-prod'
-    'prod'
+  'nonprod'
+  'prod'
 ])
 param environmentType string
 
-@descprption('The name of App Service app. This name must be globally unique')
+@description('The name of the App Service app. This name must be globally unique.')
 param appServiceAppName string
 
 var appServicePlanName = 'toy-website-plan'
-var appServicePlanSkuName = (environmentType == 'prod') ? 'P1V3' : 'F1'
+var appServicePlanSkuName = (environmentType == 'prod') ? 'P2v3' : 'F1'
 var appServicePlanTierName = (environmentType == 'prod') ? 'PremiumV3' : 'Free'
 
 resource appServicePlan 'Microsoft.Web/serverFarms@2022-03-01' = {
@@ -24,7 +24,7 @@ resource appServicePlan 'Microsoft.Web/serverFarms@2022-03-01' = {
   }
 }
 
-resource apppServiceApp 'Microsoft.Web/sites@2022-03-01' = {
+resource appServiceApp 'Microsoft.Web/sites@2022-03-01' = {
   name: appServiceAppName
   location: location
   properties: {
