@@ -1,0 +1,1 @@
+[Git を使用して Bicep コードの変更を管理する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/manage-changes-bicep-code-git/) で使用したファイルを置いています

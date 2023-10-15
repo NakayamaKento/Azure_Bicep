@@ -16,3 +16,6 @@ Microsoft Learn で使ったファイルを置いています
 
 ## L005
 [Bicep を使用して子と拡張機能のリソースをデプロイする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/child-extension-bicep-templates/)
+
+## L006
+[Git を使用して Bicep コードの変更を管理する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/manage-changes-bicep-code-git/)
