@@ -1,0 +1,1 @@
+[モジュールを使用してコンポーザブルな Bicep ファイルを作成する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/create-composable-bicep-files-using-modules/)で使用したファイルを置いています

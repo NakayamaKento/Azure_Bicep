@@ -2,15 +2,15 @@
 param location string
 
 @secure()
-@description('The administrator login username for the Azure SQL Server.')
+@description('The administrator login username for the SQL server.')
 param sqlServerAdministratorLogin string
 
 @secure()
-@description('The administrator login password for the Azure SQL Server.')
+@description('The administrator login password for the SQL server.')
 param sqlServerAdministratorLoginPassword string
 
-@description('The name of tier of the SQL database SKU')
-param sqlDatabaseSKU object = {
+@description('The name and tier of the SQL database SKU.')
+param sqlDatabaseSku object = {
   name: 'Standard'
   tier: 'Standard'
 }
@@ -23,11 +23,10 @@ param sqlDatabaseSKU object = {
 param environmentName string = 'Development'
 
 @description('The name of the audit storage account SKU.')
-param auditStorageAccountSKU string = 'Standard_LRS'
+param auditStorageAccountSkuName string = 'Standard_LRS'
 
 var sqlServerName = 'teddy${location}${uniqueString(resourceGroup().id)}'
-var sqlDatabaseName = 'TeddyBar'
-
+var sqlDatabaseName = 'TeddyBear'
 var auditingEnabled = environmentName == 'Production'
 var auditStorageAccountName = take('bearaudit${location}${uniqueString(resourceGroup().id)}', 24)
 
@@ -40,23 +39,23 @@ resource sqlServer 'Microsoft.Sql/servers@2021-11-01-preview' = {
   }
 }
 
-resource sqlDatabse 'Microsoft.Sql/servers/databases@2021-11-01-preview' = {
+resource sqlDatabase 'Microsoft.Sql/servers/databases@2021-11-01-preview' = {
   parent: sqlServer
   name: sqlDatabaseName
   location: location
-  sku: sqlDatabaseSKU
+  sku: sqlDatabaseSku
 }
 
-resource auditStorageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = if(auditingEnabled) {
+resource auditStorageAccount 'Microsoft.Storage/storageAccounts@2021-09-01' = if (auditingEnabled) {
   name: auditStorageAccountName
   location: location
   sku: {
-    name: auditStorageAccountSKU
+    name: auditStorageAccountSkuName
   }
-  kind: 'StorageV2'
+  kind: 'StorageV2'  
 }
 
-resource sqlServerAudit 'Microsoft.Sql/servers/auditingSettings@2021-11-01-preview' = if(auditingEnabled) {
+resource sqlServerAudit 'Microsoft.Sql/servers/auditingSettings@2021-11-01-preview' = if (auditingEnabled) {
   parent: sqlServer
   name: 'default'
   properties: {
@@ -65,3 +64,7 @@ resource sqlServerAudit 'Microsoft.Sql/servers/auditingSettings@2021-11-01-previ
     storageAccountAccessKey: environmentName == 'Production' ? listKeys(auditStorageAccount.id, auditStorageAccount.apiVersion).keys[0].value : ''
   }
 }
+
+output serverName string = sqlServer.name
+output location string = location
+output serverFullyQualifiedDomainName string = sqlServer.properties.fullyQualifiedDomainName
