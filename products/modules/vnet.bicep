@@ -1,6 +1,7 @@
 param location string = 'japaneast'
 param Name string
 param vnetAddress string = '10.0.0.0'
+param bastion bool
 
 var vnetName = '${Name}-vnet'
 var subnetName = '${Name}-subnet'
