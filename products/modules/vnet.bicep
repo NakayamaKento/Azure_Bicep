@@ -2,9 +2,10 @@ param location string = 'japaneast'
 param Name string
 param vnetAddress string = '10.0.0.0'
 param bastion bool = false
+param firewall bool = false
+param gateway bool = false
 
 var vnetName = '${Name}-vnet'
-var subnetName = '${Name}-subnet'
 var vnetAddressPrefix = cidrSubnet(vnetAddress, 16, 0)
 var subnets = [
   {
@@ -16,6 +17,16 @@ var subnets = [
     name: 'AzureBastionSubnet'
     addressPrefix: cidrSubnet(vnetAddress, 24, 1)
     exist: bastion
+  }
+  {
+    name: 'AzureFirewallSubnet'
+    addressPrefix: cidrSubnet(vnetAddress, 24, 2)
+    exist: firewall
+  }
+  {
+    name: 'GatewaySubnet'
+    addressPrefix: cidrSubnet(vnetAddress, 24, 3)
+    exist: gateway
   }
 ]
 
