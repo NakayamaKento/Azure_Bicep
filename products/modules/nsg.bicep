@@ -1,8 +1,8 @@
 param location string = 'japaneast'
-param nsgName string
+param Name string
 
 resource nsg 'Microsoft.Network/networkSecurityGroups@2021-02-01' = {
-  name: nsgName
+  name: Name
   location: location
   properties: {
     securityRules: []

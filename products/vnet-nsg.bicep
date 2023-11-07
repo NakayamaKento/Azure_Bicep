@@ -16,7 +16,7 @@ module nsg './modules/nsg.bicep' = {
   name: nsgName
   params: {
     location: location
-    nsgName: nsgName
+    Name: nsgName
   }
 }
 
@@ -67,5 +67,6 @@ module vnet './modules/vnet.bicep' = {
     Name: vnetName
     vnetAddress: vnetaddress
     location: location
+    nsgid: nsg.outputs.nsgId
   }
 }

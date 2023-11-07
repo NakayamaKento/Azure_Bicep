@@ -4,6 +4,7 @@ param vnetAddress string = '10.0.0.0'
 param bastion bool = false
 param firewall bool = false
 param gateway bool = false
+param nsgid string
 
 var vnetName = '${Name}-vnet'
 var vnetAddressPrefix = cidrSubnet(vnetAddress, 16, 0)
@@ -51,6 +52,7 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' = [for su
     parent: vnet
     properties: {
       addressPrefix: subnetinfo.addressPrefix
+      networkSecurityGroup: subnetinfo.nsg ? { id: nsgid } : null
     }
   }
 ]
