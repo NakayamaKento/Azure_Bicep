@@ -51,6 +51,3 @@ resource nsgRule 'Microsoft.Network/networkSecurityGroups/securityRules@2021-02-
   }
   parent: existingNsg
 }
-
-
-

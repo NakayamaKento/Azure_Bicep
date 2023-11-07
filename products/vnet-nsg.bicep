@@ -5,24 +5,22 @@
 
 param location string = 'japaneast'
 param vnetName string = 'myVnet'
-param addressPrefix string = '10.0.0.0/16'
-param subnetName string = 'mySubnet'
-param subnetPrefix string = '10.0.0.0/24'
+param vnetaddress string = '10.0.0.0'
 param nsgName string = 'myNsg'
 
-
 param allow_rdp bool = true
+param allow_ssh bool = false
 
-
+// module を使用した NSG の作成
 module nsg './modules/nsg.bicep' = {
   name: nsgName
   params: {
     location: location
-    nsgName: nsgName
+    Name: nsgName
   }
 }
 
-
+// module を使用した NSG ルールの作成
 module allow_rdp_rule 'modules/nsg-rules.bicep' = if (allow_rdp) {
   name: 'allow_rdp_rule'
   params: {
@@ -42,26 +40,33 @@ module allow_rdp_rule 'modules/nsg-rules.bicep' = if (allow_rdp) {
   ]
 }
 
+// module を使用した NSG ルールの作成
+module allow_ssh_rule 'modules/nsg-rules.bicep' = if (allow_ssh) {
+  name: 'allow_ssh_rule'
+  params: {
+    nsgName: nsgName
+    ruleName: 'allowSSH'
+    priority: 101
+    direction: 'Inbound'
+    access: 'Allow'
+    protocol: 'TCP'
+    sourcePortRange: '*'
+    destinationPortRange: '22'
+    sourceAddressPrefix: '*'
+    destinationAddressPrefix: '*'
+  }
+  dependsOn: [
+    nsg
+  ]
+}
 
-resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
+// module を使用した Vnet の作成
+module vnet './modules/vnet.bicep' = {
   name: vnetName
-  location: location
-  properties: {
-    addressSpace: {
-      addressPrefixes: [
-        addressPrefix
-      ]
-    }
-    subnets: [
-      {
-        name: subnetName
-        properties: {
-          addressPrefix: subnetPrefix
-          networkSecurityGroup: {
-            id: nsg.outputs.nsgId
-          }
-        }
-      }
-    ]
+  params: {
+    Name: vnetName
+    vnetAddress: vnetaddress
+    location: location
+    nsgid: nsg.outputs.nsgId
   }
 }
