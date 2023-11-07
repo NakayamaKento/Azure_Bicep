@@ -12,21 +12,25 @@ var subnets = [
     name: 'default'
     addressPrefix: cidrSubnet(vnetAddress, 24, 0)
     exist: true
+    nsg: true
   }
   {
     name: 'AzureBastionSubnet'
     addressPrefix: cidrSubnet(vnetAddress, 24, 1)
     exist: bastion
+    nsg: false
   }
   {
     name: 'AzureFirewallSubnet'
     addressPrefix: cidrSubnet(vnetAddress, 24, 2)
     exist: firewall
+    nsg: false
   }
   {
     name: 'GatewaySubnet'
     addressPrefix: cidrSubnet(vnetAddress, 24, 3)
     exist: gateway
+    nsg: false
   }
 ]
 
@@ -52,3 +56,4 @@ resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' = [for su
 ]
 
 output vnetId string = vnet.id
+output subnets array = subnets
