@@ -11,6 +11,10 @@ param nsgName string = 'myNsg'
 param allow_rdp bool = true
 param allow_ssh bool = false
 
+param bastion bool = false
+param firewall bool = false
+param gateway bool = false
+
 // module を使用した NSG の作成
 module nsg './modules/nsg.bicep' = {
   name: nsgName
@@ -68,5 +72,8 @@ module vnet './modules/vnet.bicep' = {
     vnetAddress: vnetaddress
     location: location
     nsgid: nsg.outputs.nsgId
+    bastion: bastion
+    firewall: firewall
+    gateway: gateway
   }
 }
