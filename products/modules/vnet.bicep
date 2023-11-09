@@ -1,6 +1,6 @@
-param location string = 'japaneast'
+param location string
 param Name string
-param vnetAddress string = '10.0.0.0'
+param vnetAddress string
 param bastion bool = false
 param firewall bool = false
 param gateway bool = false

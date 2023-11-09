@@ -4,11 +4,11 @@
 */
 
 param location string = 'japaneast'
-param vnetName string = 'myVnet'
+param vnetName string = 'my01'
 param vnetaddress string = '10.0.0.0'
-param nsgName string = 'myNsg'
+param nsgName string = 'my01'
 
-param allow_rdp bool = true
+param allow_rdp bool = false
 param allow_ssh bool = false
 
 param bastion bool = false
