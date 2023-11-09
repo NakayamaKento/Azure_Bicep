@@ -5,7 +5,7 @@
 
 param location string = 'japaneast'
 param vnetName string = 'my01'
-param vnetaddress string = '10.0.0.0'
+param vnetaddress string = '10.0.0.0/16'
 param nsgName string = 'my01'
 
 param allow_rdp bool = false
