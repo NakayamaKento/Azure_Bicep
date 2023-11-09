@@ -35,7 +35,7 @@ var subnets = [
   }
 ]
 
-resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
+resource vnet 'Microsoft.Network/virtualNetworks@2023-05-01' = {
   name: vnetName
   location: location
   properties: {
@@ -46,6 +46,7 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
     }
   }
 }
+
 
 resource subnet 'Microsoft.Network/virtualNetworks/subnets@2023-05-01' = [for subnetinfo in subnets: if (subnetinfo.exist) {
     name: subnetinfo.name
