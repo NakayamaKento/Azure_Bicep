@@ -4,9 +4,9 @@
 */
 
 param location string = 'japaneast'
-param vnetName string = 'my01'
+param vnetName string = 'myVNet'
 param vnetaddress string = '10.0.0.0/16'
-param nsgName string = 'my01'
+param nsgName string = 'myNSG'
 
 param allow_rdp bool = false
 param allow_ssh bool = false
