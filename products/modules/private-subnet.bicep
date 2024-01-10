@@ -6,7 +6,7 @@ param firewall bool = false
 param gateway bool = false
 param nsgid string
 
-@description("defaultOutboundAccess" プロパティを使用して、プライベート サブネットを有効化するかどうかを指定します。 false の場合、プライベート サブネットが有効化されます)
+@description(defaultOutboundAccess プロパティを使用して、プライベート サブネットを有効化するかどうかを指定します。 false の場合、プライベート サブネットが有効化されます)
 param privatesubnetpolicy bool = false
 
 var vnetName = '${Name}-vnet'
