@@ -14,7 +14,7 @@ param location string = resourceGroup().location
   'P3'
   'P4'
 ])
-param skuName string = 'F1'
+param appServicePlanSKU string = 'F1'
 
 @minValue(1)
 param skuCapacity int = 1
@@ -23,7 +23,9 @@ param sqlAdministratorLogin string
 @secure()
 param sqlAdministratorLoginPassword string
 
-param managedIdentityName string
+param managedIdentityName string = 'msimanagedid${uniqueString(resourceGroup().id)}'
+
+@description('Contributor role definition ID')
 param roleDefinitionId string = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
 param webSiteName string = 'webSite${uniqueString(resourceGroup().id)}'
 param container1Name string = 'productspecs'
@@ -95,7 +97,7 @@ resource hostingPlan 'Microsoft.Web/serverfarms@2020-06-01' = {
   name: hostingPlanName
   location: location
   sku: {
-    name: skuName
+    name: appServicePlanSKU
     capacity: skuCapacity
   }
 }
