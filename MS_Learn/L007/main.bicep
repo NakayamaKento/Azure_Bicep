@@ -31,7 +31,7 @@ param webSiteName string = 'webSite${uniqueString(resourceGroup().id)}'
 param container1Name string = 'productspecs'
 param productmanualsName string = 'productmanuals'
 
-var hostingPlanName = 'hostingplan${uniqueString(resourceGroup().id)}'
+var AppServicePlanName = 'hostingplan${uniqueString(resourceGroup().id)}'
 var sqlserverName = 'toywebsite${uniqueString(resourceGroup().id)}'
 var storageAccountName = 'toywebsite${uniqueString(resourceGroup().id)}'
 
@@ -93,8 +93,8 @@ resource sqlServerNameAllowAllAzureIPs 'Microsoft.Sql/servers/firewallRules@2014
 resource productmanuals 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-06-01' = {
   name: '${storageAccount.name}/default/${productmanualsName}'
 }
-resource hostingPlan 'Microsoft.Web/serverfarms@2020-06-01' = {
-  name: hostingPlanName
+resource AppServicePlan 'Microsoft.Web/serverfarms@2020-06-01' = {
+  name: AppServicePlanName
   location: location
   sku: {
     name: appServicePlanSKU
@@ -106,7 +106,7 @@ resource webSite 'Microsoft.Web/sites@2020-06-01' = {
   name: webSiteName
   location: location
   properties: {
-    serverFarmId: hostingPlan.id
+    serverFarmId: AppServicePlan.id
     siteConfig: {
       appSettings: [
         {
