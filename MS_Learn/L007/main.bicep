@@ -27,7 +27,7 @@ param managedIdentityName string = 'msimanagedid${uniqueString(resourceGroup().i
 
 @description('Contributor role definition ID')
 param roleDefinitionId string = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
-param webSiteName string = 'webSite${uniqueString(resourceGroup().id)}'
+param AppServiceName string = 'webSite${uniqueString(resourceGroup().id)}'
 param container1Name string = 'productspecs'
 param productmanualsName string = 'productmanuals'
 
@@ -102,8 +102,8 @@ resource AppServicePlan 'Microsoft.Web/serverfarms@2020-06-01' = {
   }
 }
 
-resource webSite 'Microsoft.Web/sites@2020-06-01' = {
-  name: webSiteName
+resource AppService 'Microsoft.Web/sites@2020-06-01' = {
+  name: AppServiceName
   location: location
   properties: {
     serverFarmId: AppServicePlan.id
