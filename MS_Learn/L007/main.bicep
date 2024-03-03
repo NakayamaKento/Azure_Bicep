@@ -151,6 +151,7 @@ resource roleassignment 'Microsoft.Authorization/roleAssignments@2020-04-01-prev
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionId)
     principalId: msi.properties.principalId
+    description: 'Assign the managed identityfoe for connecting to the database'
   }
 }
 
