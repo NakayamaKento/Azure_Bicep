@@ -23,7 +23,7 @@ param sqlAdministratorLogin string
 @secure()
 param sqlAdministratorLoginPassword string
 
-param managedIdentityName string = 'msimanagedid${uniqueString(resourceGroup().id)}'
+param managedIdentityName string = 'managedid${uniqueString(resourceGroup().id)}'
 
 @description('Contributor role definition ID')
 param roleDefinitionId string = 'b24988ac-6180-42a0-ab88-20f7382dd24c'
