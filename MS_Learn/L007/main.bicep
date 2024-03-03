@@ -56,7 +56,7 @@ resource container1 'Microsoft.Storage/storageAccounts/blobServices/containers@2
   name: container1Name
 }
 
-resource sqlserver 'Microsoft.Sql/servers@2019-06-01-preview' = {
+resource sqlServer 'Microsoft.Sql/servers@2019-06-01-preview' = {
   name: sqlserverName
   location: location
   properties: {
@@ -68,7 +68,7 @@ resource sqlserver 'Microsoft.Sql/servers@2019-06-01-preview' = {
 
 var databaseName = 'ToyCompanyWebsite'
 resource sqlserverName_databaseName 'Microsoft.Sql/servers/databases@2020-08-01-preview' = {
-  name: '${sqlserver.name}/${databaseName}'
+  name: '${sqlServer.name}/${databaseName}'
   location: location
   sku: {
     name: 'Basic'
@@ -79,14 +79,14 @@ resource sqlserverName_databaseName 'Microsoft.Sql/servers/databases@2020-08-01-
   }
 }
 
-resource sqlserverName_AllowAllAzureIPs 'Microsoft.Sql/servers/firewallRules@2014-04-01' = {
-  name: '${sqlserver.name}/AllowAllAzureIPs'
+resource sqlServerNameAllowAllAzureIPs 'Microsoft.Sql/servers/firewallRules@2014-04-01' = {
+  name: '${sqlServer.name}/AllowAllAzureIPs'
   properties: {
     endIpAddress: '0.0.0.0'
     startIpAddress: '0.0.0.0'
   }
   dependsOn: [
-    sqlserver
+    sqlServer
   ]
 }
 
@@ -111,7 +111,7 @@ resource webSite 'Microsoft.Web/sites@2020-06-01' = {
       appSettings: [
         {
           name: 'APPINSIGHTS_INSTRUMENTATIONKEY'
-          value: AppInsights_webSiteName.properties.InstrumentationKey
+          value: AppInsightsWebSiteName.properties.InstrumentationKey
         }
         {
           name: 'StorageAccountConnectionString'
@@ -154,7 +154,7 @@ resource roleassignment 'Microsoft.Authorization/roleAssignments@2020-04-01-prev
   }
 }
 
-resource AppInsights_webSiteName 'Microsoft.Insights/components@2018-05-01-preview' = {
+resource AppInsightsWebSiteName 'Microsoft.Insights/components@2018-05-01-preview' = {
   name: 'AppInsights'
   location: location
   kind: 'web'
