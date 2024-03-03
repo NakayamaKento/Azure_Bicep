@@ -123,7 +123,7 @@ resource AppService 'Microsoft.Web/sites@2020-06-01' = {
   identity: {
     type: 'UserAssigned'
     userAssignedIdentities: {
-      '${msi.id}': {}
+      '${managedId.id}': {}
     }
   }
 }
@@ -139,7 +139,7 @@ resource AppService 'Microsoft.Web/sites@2020-06-01' = {
 //  }
 //}
 
-resource msi 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
+resource managedId 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
   name: managedIdentityName
   location: location
 }
@@ -150,7 +150,7 @@ resource roleassignment 'Microsoft.Authorization/roleAssignments@2020-04-01-prev
   properties: {
     principalType: 'ServicePrincipal'
     roleDefinitionId: subscriptionResourceId('Microsoft.Authorization/roleDefinitions', roleDefinitionId)
-    principalId: msi.properties.principalId
+    principalId: managedId.properties.principalId
     description: 'Assign the managed identityfoe for connecting to the database'
   }
 }
