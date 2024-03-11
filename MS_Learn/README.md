@@ -28,3 +28,6 @@ Microsoft Learn で使ったファイルを置いています
 
 ## L008
 [Bicep と pull request を使用して Azure インフラストラクチャの変更を確認する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/review-azure-infrastructure-changes-using-bicep-pull-requests/)
+
+## L009
+[What-If を使用して Azure デプロイの変更をプレビューする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/arm-template-whatif/)
