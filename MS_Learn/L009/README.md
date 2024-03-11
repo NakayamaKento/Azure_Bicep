@@ -1,0 +1,1 @@
+[What-If を使用して Azure デプロイの変更をプレビューする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/arm-template-whatif/) で使用したファイルを置いています
