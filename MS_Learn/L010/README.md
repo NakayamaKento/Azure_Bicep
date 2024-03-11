@@ -1,0 +1,1 @@
+[Bicep を使用するために Azure リソースと JSON ARM テンプレートを移行する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/migrate-azure-resources-bicep/) で使用したファイルを置いています
