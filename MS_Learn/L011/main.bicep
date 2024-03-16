@@ -1,5 +1,8 @@
 targetScope = 'subscription'
 
+param virtualNetworkName string
+param virtualNetworkAddressPrefix string
+
 var policyDefinitionName = 'DenyFandGServiceVMs'
 var policyAssignmentName = 'DenyFandGServiceVMs'
 var resourceGroupName = 'ToyNetworking'
@@ -48,9 +51,19 @@ resource policyAssignment 'Microsoft.Authorization/policyAssignments@2020-09-01'
   }
 }
 
-
 // リソース グループの作成
 resource resourcegroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: resourceGroupName
   location: deployment().location
+}
+
+// 仮想ネットワークの作成
+// デプロイするリソースグループは直前で作成したものを指定
+module virtualNetwork 'modules/virtualNetwork.bicep' = {
+  scope: resourcegroup
+  name: 'virtualNetwork'
+  params: {
+    virtualNetworkAddressPrefix: virtualNetworkAddressPrefix
+    virtualNetworkName: virtualNetworkName
+  }
 }
