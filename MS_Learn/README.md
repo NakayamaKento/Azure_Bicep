@@ -40,3 +40,6 @@ Microsoft Learn で使ったファイルを置いています
 
 ## L012
 [デプロイ スクリプトを使用して Bicep および ARM テンプレートを拡張する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/extend-resource-manager-template-deployment-scripts/)
+
+## L013
+[再利用可能なインフラストラクチャ コードのライブラリをテンプレート スペックを使用して発行する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/arm-template-specs/)

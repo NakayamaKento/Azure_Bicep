@@ -1,0 +1,1 @@
+[再利用可能なインフラストラクチャ コードのライブラリをテンプレート スペックを使用して発行する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/arm-template-specs/) で使用するファイルを置いています
