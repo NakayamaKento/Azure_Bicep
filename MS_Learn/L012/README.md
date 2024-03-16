@@ -1,0 +1,1 @@
+[デプロイ スクリプトを使用して Bicep および ARM テンプレートを拡張する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/extend-resource-manager-template-deployment-scripts/) で使用したファイルを置いています
