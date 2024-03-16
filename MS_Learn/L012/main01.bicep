@@ -1,10 +1,14 @@
 var storageAccountName = 'storage${uniqueString(resourceGroup().id)}'
 var storageBlobContainerName = 'config'
+
 var userAssignedIdentityName = 'configDeployer'
+
 var roleAssignmentName = guid(resourceGroup().id, 'contributor')
 var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
+
 var deploymentScriptName = 'CopyConfigScript'
 
+// ストレージアカウント
 resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   name: storageAccountName
   tags: {
@@ -14,9 +18,9 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   kind: 'StorageV2'
   sku: {
     name: 'Standard_LRS'
-    tier: 'Standard'
   }
   properties: {
+    allowBlobPublicAccess:true
     encryption: {
       services: {
         blob: {
@@ -33,6 +37,7 @@ resource storageAccount 'Microsoft.Storage/storageAccounts@2019-06-01' = {
   }
 }
 
+// blob コンテナ
 resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/containers@2019-04-01' = {
   parent: storageAccount::blobService
   name: storageBlobContainerName
@@ -41,11 +46,13 @@ resource blobContainer 'Microsoft.Storage/storageAccounts/blobServices/container
   }
 }
 
+// ユーザー割り当てマネージド ID
 resource userAssignedIdentity 'Microsoft.ManagedIdentity/userAssignedIdentities@2018-11-30' = {
   name: userAssignedIdentityName
   location: resourceGroup().location
 }
 
+// ユーザー割り当てマネージド ID にロールを割り当てる
 resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-preview' = {
   name: roleAssignmentName
   properties: {
@@ -55,6 +62,7 @@ resource roleAssignment 'Microsoft.Authorization/roleAssignments@2020-04-01-prev
   }
 }
 
+// デプロイ スクリプト
 resource deploymentScript 'Microsoft.Resources/deploymentScripts@2020-10-01' = {
   name: deploymentScriptName
   location: resourceGroup().location
