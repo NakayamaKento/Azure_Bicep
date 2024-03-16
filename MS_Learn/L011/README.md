@@ -1,0 +1,1 @@
+[Bicep を使用してサブスクリプション、管理グループ、テナントにリソースをデプロイする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/deploy-resources-scopes-bicep/) で使用したファイルを置いています
