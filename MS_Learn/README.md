@@ -43,3 +43,6 @@ Microsoft Learn で使ったファイルを置いています
 
 ## L013
 [再利用可能なインフラストラクチャ コードのライブラリをテンプレート スペックを使用して発行する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/arm-template-specs/)
+
+## L014
+[プライベート レジストリを使用して Bicep モジュールを共有します - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/share-bicep-modules-using-private-registries/)

@@ -1,0 +1,1 @@
+[プライベート レジストリを使用して Bicep モジュールを共有します - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/share-bicep-modules-using-private-registries/) で使用したファイルを置いています
