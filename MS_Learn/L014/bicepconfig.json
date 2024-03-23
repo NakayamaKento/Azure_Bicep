@@ -1,0 +1,9 @@
+{
+    "moduleAliases": {
+      "br": {
+        "ToyCompanyRegistry": {
+          "registry": "kenakayacr.azurecr.io"
+        }
+      }
+    }
+  }
