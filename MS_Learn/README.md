@@ -46,3 +46,6 @@ Microsoft Learn で使ったファイルを置いています
 
 ## L014
 [プライベート レジストリを使用して Bicep モジュールを共有します - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/share-bicep-modules-using-private-registries/)
+
+## L015
+[Bicep と Azure Pipelines を使用して Azure リソースをデプロイ - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/paths/bicep-azure-pipelines/)
