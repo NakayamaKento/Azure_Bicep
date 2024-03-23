@@ -47,5 +47,8 @@ Microsoft Learn で使ったファイルを置いています
 ## L014
 [プライベート レジストリを使用して Bicep モジュールを共有します - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/share-bicep-modules-using-private-registries/)
 
+# Github Action
+[Bicep アクションと GitHub アクションを使用して Azure リソースをデプロイする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/paths/bicep-github-actions/)
+
 ## L015
-[Bicep と Azure Pipelines を使用して Azure リソースをデプロイ - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/paths/bicep-azure-pipelines/)
+[GitHub Actions を使用して、初めての Bicep デプロイ ワークフローを構築する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/build-first-bicep-deployment-pipeline-using-github-actions/)
