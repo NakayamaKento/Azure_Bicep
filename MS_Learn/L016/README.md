@@ -1,0 +1,1 @@
+[ワークロード ID を使用して Azure デプロイ ワークフローを認証する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/authenticate-azure-deployment-workflow-workload-identities/) で使用したファイルを置いています

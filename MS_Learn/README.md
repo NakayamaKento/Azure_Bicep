@@ -5,6 +5,9 @@ Microsoft Learn で使ったファイルを置いています
 
 # 目次
 
+# Bicep の基礎
+[Bicep の基礎 - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/paths/fundamentals-bicep/)
+
 ## L001
 [初めての Bicep テンプレートを作成する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/build-first-bicep-template/)
 
@@ -16,6 +19,10 @@ Microsoft Learn で使ったファイルを置いています
 
 ## L004
 [モジュールを使用してコンポーザブルな Bicep ファイルを作成する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/create-composable-bicep-files-using-modules/)
+
+---
+# 中級 Bicep
+[中級 Bicep - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/paths/intermediate-bicep/)
 
 ## L005
 [Bicep を使用して子と拡張機能のリソースをデプロイする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/child-extension-bicep-templates/)
@@ -35,6 +42,10 @@ Microsoft Learn で使ったファイルを置いています
 ## L010
 [Bicep を使用するために Azure リソースと JSON ARM テンプレートを移行する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/migrate-azure-resources-bicep/)
 
+---
+# 高度な Bicep
+[高度な Bicep - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/paths/advanced-bicep/)
+
 ## L011
 [Bicep を使用してサブスクリプション、管理グループ、テナントにリソースをデプロイする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/deploy-resources-scopes-bicep/)
 
@@ -52,3 +63,6 @@ Microsoft Learn で使ったファイルを置いています
 
 ## L015
 [GitHub Actions を使用して、初めての Bicep デプロイ ワークフローを構築する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/build-first-bicep-deployment-pipeline-using-github-actions/)
+
+## L016
+[ワークロード ID を使用して Azure デプロイ ワークフローを認証する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/authenticate-azure-deployment-workflow-workload-identities/)
