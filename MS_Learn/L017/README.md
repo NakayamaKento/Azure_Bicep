@@ -1,0 +1,1 @@
+[Bicep と GitHub Actions を使用して複数の環境を管理する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/manage-multiple-environments-using-bicep-github-actions/) で使用したファイルを置いています

@@ -65,4 +65,7 @@ Microsoft Learn で使ったファイルを置いています
 [GitHub Actions を使用して、初めての Bicep デプロイ ワークフローを構築する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/build-first-bicep-deployment-pipeline-using-github-actions/)
 
 ## L016
-[ワークロード ID を使用して Azure デプロイ ワークフローを認証する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/authenticate-azure-deployment-workflow-workload-identities/)
+[GitHub Actions を使用して Bicep コードをテストする - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/test-bicep-code-using-github-actions/)
+
+## L017
+[Bicep と GitHub Actions を使用して複数の環境を管理する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/manage-multiple-environments-using-bicep-github-actions/)
