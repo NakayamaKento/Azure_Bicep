@@ -1,7 +1,7 @@
 param resourceNamePrefix string = 'kenakay'
 param vnetAddressPrefix string = '10.0.0.0/16'
 param adAdminUserName string = 'AzureAdmin'
-param adAdminPassword string = 'Otnek0195___'
+param adAdminPassword string
 
 //var dnsServerAddress
 
