@@ -1,0 +1,1 @@
+[Bicep と GitHub Actions を使用してエンドツーエンドのデプロイ シナリオを実現する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/manage-end-end-deployment-scenarios-using-bicep-github-actions/) で使用したファイルを置いています

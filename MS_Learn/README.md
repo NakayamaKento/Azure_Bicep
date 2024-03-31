@@ -69,3 +69,6 @@ Microsoft Learn で使ったファイルを置いています
 
 ## L017
 [Bicep と GitHub Actions を使用して複数の環境を管理する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/manage-multiple-environments-using-bicep-github-actions/)
+
+## L018
+[Bicep と GitHub Actions を使用してエンドツーエンドのデプロイ シナリオを実現する - Training | Microsoft Learn](https://learn.microsoft.com/ja-jp/training/modules/manage-end-end-deployment-scenarios-using-bicep-github-actions/)
