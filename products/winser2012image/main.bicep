@@ -22,14 +22,14 @@ resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
         vnetAddressPrefix
       ]
     }
-    subnets: [
-      {
-        name: '${NamePrefix}-subnet'
-        properties: {
-          addressPrefix: cidrSubnet(vnetAddressPrefix, 24, 0)
-        }
-      }
-    ]
+  }
+}
+
+resource subnet 'Microsoft.Network/virtualNetworks/subnets@2021-02-01' = {
+  name: '${NamePrefix}-subnet'
+  parent: vnet
+  properties: {
+    addressPrefix: cidrSubnet(vnetAddressPrefix, 24, 0)
   }
 }
 
@@ -65,7 +65,7 @@ resource nic 'Microsoft.Network/networkInterfaces@2021-02-01' = {
         properties: {
           privateIPAllocationMethod: 'Dynamic'
           subnet: {
-            id: vnet.subnets[0].id
+            id: subnet.id
           }
           publicIPAddress: {
             id: resourceId('Microsoft.Network/publicIPAddresses', '${NamePrefix}-pip')
