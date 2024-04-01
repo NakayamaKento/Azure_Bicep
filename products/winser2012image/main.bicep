@@ -72,7 +72,7 @@ resource vm 'Microsoft.Compute/virtualMachines@2021-03-01' = {
       adminPassword: adminPassword
     }
     storageProfile: {
-      $valReference: {
+      image: {
         publisher: 'MicrosoftWindowsServer'
         offer: 'WindowsServer'
         sku: '2012-Datacenter'
