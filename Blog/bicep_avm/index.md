@@ -1,0 +1,1 @@
+[Azure Verified Modules を使って Bicep をデプロイし隊 – クラウドを勉強し隊](https://kentsu.website/ja/posts/2024/bicep_avm/) で使用したファイルを置いています
