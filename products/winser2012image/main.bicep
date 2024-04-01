@@ -2,7 +2,6 @@
 param winSer2012version string
 
 param location string = resourceGroup().location
-param NamePrefix string = 'winser2012'
 param adminUsername string = 'AzureAdmin'
 
 @description('/24 よりも大きい値にしてください')
@@ -12,6 +11,7 @@ param vnetAddressPrefix string = '10.0.0.0/16'
 param adminPassword string
 
 
+var NamePrefix ='winser2012'
 
 resource vnet 'Microsoft.Network/virtualNetworks@2021-02-01' = {
   name: '${NamePrefix}-vnet'
