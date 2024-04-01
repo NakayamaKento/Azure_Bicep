@@ -23,7 +23,7 @@ jobs:
           run: |
                 image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2012-datacenter --all --output tsv --query '[].version')
                 echo "::set-output name=image::$image"
-                imagelist=`echo $image | sed -e "s/[\r\n]\+/"/g"`
+                imagelist=`echo $image | sed -e "s/[\r\n]\+/'/g"`
                 imagedescription="@description(' $imagelist ')"
                 sed -i -e "1s/^.*$/$imagedescription/g" ./products/winser2012image/main.bicep
 
