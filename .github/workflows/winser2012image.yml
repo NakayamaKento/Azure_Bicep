@@ -25,9 +25,7 @@ jobs:
                 echo "::set-output name=image::$image"
                 imagelist=`echo $image | sed -e "s/[\r\n]\+//g"`
                 imagedescription="@description(' $imagelist ')"
-        - name: Update Bicep file
-          run: |
-                sed -i -e "1s/^.*$/${{ steps.get-image.outputs.imagedescription}}/g" ./products/winser2012image/main.bicep
+                sed -i -e "1s/^.*$/$imagedescription/g" ./products/winser2012image/main.bicep
 
         - name: Commit and push changes
           run: |
