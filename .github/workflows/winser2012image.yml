@@ -1,0 +1,38 @@
+name: Azure VM Image Workflow
+
+on: workflow_dispatch
+
+permissions:
+    id-token: write
+    contents: read
+
+jobs:
+    winser2012imageUpdate:
+        runs-on: ubuntu-latest
+        steps:
+        - name: Checkout repository
+          uses: actions/checkout@v4
+        - name: Set up Azure CLI
+          uses: azure/login@v2
+          with:
+            client-id: ${{ secrets.AZURE_CLIENT_ID }}
+            tenant-id: ${{ secrets.AZURE_TENANT_ID }}
+            subscription-id: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+        - name: Get Azure VM Image
+          id: get-image
+          run: |
+                image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2012-datacenter --all --output tsv --query '[].version')
+                echo "::set-output name=image::$image"
+                imagelist=`echo $image | sed -e "s/[\r\n]\+//g"`
+                imagedescription="@description(' $imagelist ')"
+        - name: Update Bicep file
+          run: |
+                sed -i -e "1s/^.*$/${{ steps.get-image.outputs.imagedescription}}/g" ./products/winser2012image/main.bicep
+
+        - name: Commit and push changes
+          run: |
+                git config --global user.name "GitHub Actions"
+                git config --global user.email "actions@github.com"
+                git add ./products/winser2012image/main.bicep
+                git commit -m "Update Bicep file with Azure VM image"
+                git push
