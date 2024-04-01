@@ -1,4 +1,4 @@
-@description('テスト')
+@description('hoge')
 param winSer2012version string
 
 param location string = resourceGroup().location
