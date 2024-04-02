@@ -1,0 +1,87 @@
+@description(' 3.127.20190214 9200.23920.221007 9200.23968.221105 9200.24018.221202 9200.24075.230107 9200.24116.230208 9200.24168.230311 9200.24216.230330 9200.24266.230505 9200.24314.230531 9200.24314.230621 9200.24374.230707 9200.24414.230802 9200.24462.230825 9200.24523.231004 9200.23920.221007 9200.23968.221105 9200.24018.221202 9200.24075.230107 9200.24116.230208 9200.24168.230311 9200.24216.230330 9200.24266.230505 9200.24314.230531 9200.24314.230621 9200.24374.230707 9200.24414.230802 9200.24462.230825 9200.24523.231004 3.127.20181010 3.127.20190214 3.127.20190314 3.127.20190410 9200.23920.221007 9200.23968.221105 9200.24018.221202 9200.24075.230107 9200.24116.230208 9200.24168.230311 9200.24216.230330 9200.24266.230505 9200.24314.230531 9200.24314.230621 9200.24374.230707 9200.24414.230802 9200.24462.230825 9200.24523.231004 9200.23920.221007 9200.23968.221105 9200.24018.221202 9200.24075.230107 9200.24116.230208 9200.24168.230311 9200.24216.230330 9200.24266.230505 9200.24314.230531 9200.24314.230621 9200.24374.230707 9200.24414.230802 9200.24462.230825 9200.24523.231004 9200.23920.221007 9200.23968.221105 9200.24018.221202 9200.24075.230107 9200.24116.230208 9200.24168.230311 9200.24216.230330 9200.24266.230505 9200.24314.230531 9200.24314.230621 9200.24374.230707 9200.24414.230802 9200.24462.230825 9200.24523.231004 9200.23920.221007 9200.23968.221105 9200.24018.221202 9200.24075.230107 9200.24116.230208 9200.24168.230311 9200.24216.230330 9200.24266.230505 9200.24314.230531 9200.24314.230621 9200.24374.230707 9200.24414.230802 9200.24462.230825 9200.24523.231004 ')
+param winSer2016version string
+
+param prefix string = 'my'
+param vnetAddress string = '10.0.0.0/16'
+param adminUsername string = 'AzureAdmin'
+
+@secure()
+param adminPassword string
+
+module Vnet 'br/public:avm/res/network/virtual-network:0.1.5' = {
+  name: '${prefix}-vnet-deploy'
+  params: {
+    name: '${prefix}-vnet'
+    addressPrefixes: [
+      vnetAddress
+    ]
+    subnets:[
+      {
+        name: '${prefix}-subnet'
+        addressPrefix: cidrSubnet(vnetAddress, 24, 0)
+        networkSecurityGroupResourceId : nsg.outputs.resourceId
+      }
+    ]
+  }
+}
+
+module nsg 'br/public:avm/res/network/network-security-group:0.1.3' = {
+  name: '${prefix}-nsg-deploy'
+  params: {
+    name: '${prefix}-nsg'
+    securityRules:[
+      {
+        name: 'AllowRDP'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '3389'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 1000
+          direction: 'Inbound'
+        }
+      }
+    ]
+  }
+}
+
+module winser2016 'br/public:avm/res/compute/virtual-machine:0.2.3' = {
+  name: '${prefix}-winser2016-deploy'
+  params: {
+    adminUsername: adminUsername
+    adminPassword: adminPassword
+    availabilityZone: 0
+    imageReference: {
+      publisher: 'MicrosoftWindowsServer'
+      offer: 'WindowsServer'
+      sku: '2016-Datacenter'
+      version: winSer2016version
+    }
+    name: '${prefix}-win2016'
+    nicConfigurations: [
+      {
+        ipConfigurations: [
+          {
+            name: '${prefix}-ip-config'
+            pipConfiguration: {
+              publicIpNameSuffix: '-pip'
+            }
+            privateIpAddressVersion: 'IPv4'
+            subnetResourceId: Vnet.outputs.subnetResourceIds[0]
+          }
+        ]
+        nicSuffix: '-nic'
+      }
+    ]
+    osDisk: {
+      diskSizeGB: '128'
+      managedDisk: {
+        storageAccountType: 'Premium_LRS'
+      }
+    }
+    osType: 'Windows'
+    vmSize: 'Standard_DS2_v3'
+  }
+}
