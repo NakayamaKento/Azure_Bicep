@@ -28,7 +28,6 @@ jobs:
           id: get-image
           run: |
                 image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2022-datacenter-azure-edition --all --query "[?sku=='2022-datacenter-azure-edition'].version")
-                echo "::set-output name=image::$image"
                 imagelist=`echo $image | tr -d '[\r\n[],]'`
                 imagedescription="@description(' $imagelist ')"
                 sed -i -e "1s/^.*$/$imagedescription/g" ./products/winser2022image/main.bicep
