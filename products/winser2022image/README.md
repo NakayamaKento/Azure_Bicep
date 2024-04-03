@@ -1,12 +1,12 @@
 
 ```mermaid
 ---
-title: Vnet と Windows Server 2012
+title: Vnet と Windows Server 2022
 ---
 graph LR
 subgraph Vnet[vnet]
     subgraph Subnet[subnet]
-        WS1("Windows Server 2012")
+        WS1("Windows Server 2022")
     end
 end
 NSG1(NSG)
