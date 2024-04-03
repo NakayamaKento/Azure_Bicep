@@ -29,7 +29,7 @@ jobs:
           run: |
                 image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2022-datacenter-azure-edition --all --query "[?sku=='2022-datacenter-azure-edition'].version")
                 imagelist=`echo $image | tr -d '[\r\n[],]'`
-                imagedescription="@description('''[Windows Server のリリース情報 | Microsoft Learn](https://learn.microsoft.com/ja-jp/windows/release-health/windows-server-release-info#windows-server-%E3%81%AE%E3%83%AA%E3%83%AA%E3%83%BC%E3%82%B9%E5%B1%A5%E6%AD%B4) $imagelist ''')"
+                imagedescription="@description('$imagelist')"
                 sed -i -e "1s/^.*$/$imagedescription/g" ./products/winser2022image/main.bicep
 
         - name: Commit and push changes
