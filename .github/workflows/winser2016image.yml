@@ -12,6 +12,9 @@ jobs:
         steps:
         - name: Checkout repository
           uses: actions/checkout@v4
+        - name: Lint code
+          run: |
+            az bicep build --file ./products/winser2016image/main.bicep
         - name: Set up Azure CLI
           uses: azure/login@v2
           with:
