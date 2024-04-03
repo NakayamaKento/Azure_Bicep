@@ -21,7 +21,7 @@ jobs:
         - name: Get Azure VM Image
           id: get-image
           run: |
-                image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2016-datacenter --all --output tsv --query '[].version')
+                image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2016-datacenter --all --output tsv --query "[?sku=='2016-Datacenter'].version")
                 echo "::set-output name=image::$image"
                 imagelist=`echo $image | sed -e "s/[\r\n]\+/'/g"`
                 imagedescription="@description(' $imagelist ')"
