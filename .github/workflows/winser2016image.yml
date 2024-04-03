@@ -1,6 +1,10 @@
 name: winser2016imageUpdate
 
-on: workflow_dispatch
+on:
+    workflow_dispatch:
+    schedule:
+        - cron: '0 0 15 * *'
+
 
 permissions:
     id-token: write

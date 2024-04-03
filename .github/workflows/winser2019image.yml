@@ -1,20 +1,23 @@
-name: winser2012imageUpdate
+name: winser2019imageUpdate
 
 on:
-  workflow_dispatch:
-  schedule:
-      - cron: '0 0 15 * *'
+    workflow_dispatch:
+    schedule:
+        - cron: '0 0 15 * *'
 
 permissions:
     id-token: write
     contents: write
 
 jobs:
-    winser2012imageUpdate:
+    winser2019imageUpdate:
         runs-on: ubuntu-latest
         steps:
         - name: Checkout repository
           uses: actions/checkout@v4
+        - name: Lint code
+          run: |
+            az bicep build --file ./products/winser2019image/main.bicep
         - name: Set up Azure CLI
           uses: azure/login@v2
           with:
@@ -24,19 +27,19 @@ jobs:
         - name: Get Azure VM Image
           id: get-image
           run: |
-                image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2012-datacenter --all --output tsv --query "[?sku=='2012-Datacenter'].version")
+                image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2019-datacenter --all --output tsv --query "[?sku=='2019-Datacenter'].version")
                 echo "::set-output name=image::$image"
                 imagelist=`echo $image | sed -e "s/[\r\n]\+/'/g"`
                 imagedescription="@description(' $imagelist ')"
-                sed -i -e "1s/^.*$/$imagedescription/g" ./products/winser2012image/main.bicep
+                sed -i -e "1s/^.*$/$imagedescription/g" ./products/winser2019image/main.bicep
 
         - name: Commit and push changes
           run: |
                 git config user.name github-actions
                 git config user.email github-actions@github.com
-                git add ./products/winser2012image/main.bicep
+                git add ./products/winser2019image/main.bicep
                 git commit -m "Update Bicep file with Azure VM image"
                 git push
         - name: Deploy Template Spec
           run: |
-                az ts create --name winser2012vm --location japaneast --resource-group templateSpecRG --version ${{ github.run_number }} --template-file ./products/winser2012image/main.bicep
+                az ts create --name winser2019vm --location japaneast --resource-group templateSpecRG --version ${{ github.run_number }} --template-file ./products/winser2019image/main.bicep
