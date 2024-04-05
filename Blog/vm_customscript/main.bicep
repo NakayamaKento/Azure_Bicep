@@ -44,7 +44,7 @@ module nsg 'br/public:avm/res/network/network-security-group:0.1.3' = {
   }
 }
 
-module winser2022 'br/public:avm/res/compute/virtual-machine:0.2.3' = {
+module iisServer 'br/public:avm/res/compute/virtual-machine:0.2.3' = {
   name: '${prefix}-winser2022-deploy'
   params: {
     adminUsername: adminUsername
@@ -81,10 +81,9 @@ module winser2022 'br/public:avm/res/compute/virtual-machine:0.2.3' = {
     osType: 'Windows'
     vmSize: 'Standard_D4s_v4'
     extensionCustomScriptConfig: {
-      enable: true
+      enabled: true
       fileData: [
         {
-          storageAccountId: ''
           uri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/blog_iisinstall/Blog/vm_customscript/installiis.ps1'
         }
       ]
