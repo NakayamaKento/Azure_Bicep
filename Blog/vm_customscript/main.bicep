@@ -80,13 +80,14 @@ module winser2022 'br/public:avm/res/compute/virtual-machine:0.2.3' = {
     }
     osType: 'Windows'
     vmSize: 'Standard_D4s_v4'
-    extensionCustomScriptConfig:{
+    extensionCustomScriptConfig: {
       enable: true
       fileData: [
-        uri: 
+        {
+          storageAccountId: ''
+          uri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/blog_iisinstall/Blog/vm_customscript/installiis.ps1'
+        }
       ]
     }
   }
 }
-
-module iisInstall 
