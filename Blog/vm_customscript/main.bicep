@@ -80,13 +80,40 @@ module iisServer 'br/public:avm/res/compute/virtual-machine:0.2.3' = {
     }
     osType: 'Windows'
     vmSize: 'Standard_D4s_v4'
-    extensionCustomScriptConfig: {
+    /*extensionCustomScriptConfig: {
       enabled: true
       fileData: [
         {
-          uri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/blog_iisinstall/Blog/vm_customscript/installiis.ps1'
+          uri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/Blog/vm_customscript/installiis.ps1'
+
         }
       ]
+      settings: {
+        commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File installiis.ps1'
+      }
+    }*/
+  }
+}
+
+
+resource iisInstall 'Microsoft.Compute/virtualMachines/extensions@2020-06-01'= {
+  name: '${prefix}-win2022/installIIS'
+  location: resourceGroup().location
+  dependsOn: [
+    iisServer
+  ]
+  properties:{
+    publisher: 'Microsoft.Compute'
+    type: 'CustomScriptExtension'
+    typeHandlerVersion: '1.10'
+    autoUpgradeMinorVersion: true
+    enableAutomaticUpgrade: false
+    settings:{
+      fileUris:[
+        'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/Blog/vm_customscript/installiis.ps1'
+      ]
+      commandToExecute: 'powershell -ExecutionPolicy Unrestricted -File installiis.ps1'
     }
   }
 }
+
