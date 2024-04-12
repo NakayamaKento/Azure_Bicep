@@ -95,7 +95,7 @@ resource DCS 'Microsoft.Compute/virtualMachines/extensions@2023-09-01' = {
     typeHandlerVersion: '2.83'
     autoUpgradeMinorVersion: true
     settings:{
-      ModulesUrl: 'https://kenakakaydcsdemo.blob.core.windows.net/windows-powershell-dsc/iisinstall.ps1.zip'
+      ModulesUrl: 'https://github.com/NakayamaKento/Azure_Bicep/raw/dsc_extenstion/Blog/dcs_extension/iisinstall.ps1.zip'
       ConfigurationFunction: 'iisinstall.ps1\\IISInstall'
     }
   }
