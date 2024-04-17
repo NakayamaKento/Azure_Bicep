@@ -88,7 +88,7 @@ module iisServer 'br/public:avm/res/compute/virtual-machine:0.2.3' = {
         enabled: true
         settings:{
           configuration: {
-            url: 'https://github.com/NakayamaKento/Azure_Bicep/raw/dsc_extenstion/Blog/dcs_extension/iisinstall.ps1.zip'
+            url: 'https://github.com/NakayamaKento/Azure_Bicep/raw/dsc_extenstion/Blog/dsc_extension/iisinstall.ps1.zip'
             script: 'iisinstall.ps1'  // ここで指定したファイルが実行されます
             function: 'IISInstall'  // ここで指定した関数が実行されます
           }
