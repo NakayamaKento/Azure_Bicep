@@ -14,19 +14,6 @@ module nsg 'br/public:avm/res/network/network-security-group:0.2.0' = {
     name: '${Prefix}-nsg'
     securityRules:[
       {
-        name: 'AllowRDP'
-        properties: {
-          protocol: 'Tcp'
-          sourcePortRange: '*'
-          destinationPortRange: '3389'
-          sourceAddressPrefix: '*'
-          destinationAddressPrefix: '*'
-          access: 'Allow'
-          priority: 1000
-          direction: 'Inbound'
-        }
-      }
-      {
         name: 'AllowHTTP'
         properties: {
           protocol: 'Tcp'
@@ -161,12 +148,12 @@ module vm 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
       enabled: true
       fileData: [
         {
-          uri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/Blog/vm_customscript/installiis.ps1'
+          uri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/product/ExternalLB/iisInstall.ps1'
         }
       ]
     }
     extensionCustomScriptProtectedSetting: {
-      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File installiis.ps1'
+      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File iisInstall.ps1'
     }
   }
 }
