@@ -8,6 +8,41 @@ param AdminPassword string
 var VnetAddress = NetAddress
 var SubnetAddress = cidrSubnet(NetAddress, 24, 0)
 
+module nsg 'br/public:avm/res/network/network-security-group:0.2.0' = {
+  name: '${Prefix}-nsg-deploy'
+  params: {
+    name: '${Prefix}-nsg'
+    securityRules:[
+      {
+        name: 'AllowRDP'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '3389'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 1000
+          direction: 'Inbound'
+        }
+      }
+      {
+        name: 'AllowHTTP'
+        properties: {
+          protocol: 'Tcp'
+          sourcePortRange: '*'
+          destinationPortRange: '80'
+          sourceAddressPrefix: '*'
+          destinationAddressPrefix: '*'
+          access: 'Allow'
+          priority: 1100
+          direction: 'Inbound'
+        }
+      }
+    ]
+  }
+}
+
 // Create a virtual network
 module vnet 'br/public:avm/res/network/virtual-network:0.1.6' = {
   name: '${Prefix}-vnet-deploy'
@@ -20,6 +55,7 @@ module vnet 'br/public:avm/res/network/virtual-network:0.1.6' = {
       {
         name: '${Prefix}-subnet'
         addressPrefix: SubnetAddress
+        networkSecurityGroupResourceId: nsg.outputs.resourceId
       }
     ]
   }
@@ -70,12 +106,22 @@ module exLoadbalancer 'br/public:avm/res/network/load-balancer:0.1.4' = {
         requestPath: '/'
       }
     ]
+    // VM カスタム拡張機能のスクリプトを GitHub からダウンロードするため
+    outboundRules:[
+      {
+        allocatedOutboundPorts: 63984
+        backendAddressPoolName: '${Prefix}-exlb-bap'
+        frontendIPConfigurationName: '${Prefix}-exlb-fip'
+        name: 'outboundRule1'
+      }
+    ]
   }
 }
 
+
 // Create a virtual machine
 module vm 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
-  name: '${Prefix}-vm-deploy'
+  name: '${Prefix}-vm'
   params: {
     adminUsername: AdminUsername
     adminPassword: AdminPassword
@@ -111,5 +157,16 @@ module vm 'br/public:avm/res/compute/virtual-machine:0.5.0' = {
     osType: 'Windows'
     vmSize: 'Standard_D4s_v4'
     zone: 0
+    extensionCustomScriptConfig: {
+      enabled: true
+      fileData: [
+        {
+          uri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/Blog/vm_customscript/installiis.ps1'
+        }
+      ]
+    }
+    extensionCustomScriptProtectedSetting: {
+      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File installiis.ps1'
+    }
   }
 }
