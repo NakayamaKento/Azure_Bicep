@@ -1,4 +1,4 @@
-name: winser2022imageUpdate
+name: winser2022hotpatchimage
 
 on:
   workflow_dispatch:
