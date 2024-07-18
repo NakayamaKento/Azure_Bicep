@@ -210,7 +210,7 @@ resource vmName_ClientTools 'Microsoft.Compute/virtualMachines/extensions@2019-0
     autoUpgradeMinorVersion: true
     protectedSettings: {
       fileUris: [
-        ((useDeviceCode) ? 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/33-arc-enabled-linux-server/products/ArcEnabledWindowsServer/scripts/install_arc_agent_deviceCode.sh':'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/33-arc-enabled-linux-server/products/ArcEnabledWindowsServer/scripts/install_arc_agent.sh' )
+        ((useDeviceCode) ? 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/33-arc-enabled-linux-server/products/ArcEnabledWindowsServer/scropts/install_arc_agent_deviceCode.ps1':'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/33-arc-enabled-linux-server/products/ArcEnabledWindowsServer/scropts/install_arc_agent.ps1' )
       ]
       commandToExecute: ((useDeviceCode) ? 'powershell.exe -ExecutionPolicy Bypass -File install_arc_agent.ps1 -tenantId ${tenantId} -resourceGroup ${resourceGroupName} -subscriptionId ${subscriptionId} -location ${location} -adminUsername ${adminUsername}' :'powershell.exe -ExecutionPolicy Bypass -File install_arc_agent.ps1 -appId ${appId} -password ${password} -tenantId ${tenantId} -resourceGroup ${resourceGroupName} -subscriptionId ${subscriptionId} -location ${location} -adminUsername ${adminUsername}')
     }
