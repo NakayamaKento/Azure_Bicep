@@ -232,9 +232,13 @@ resource vmName_allowarc 'Microsoft.Compute/virtualMachines/extensions@2023-09-0
     autoUpgradeMinorVersion: true
     protectedSettings: {
       fileUris: [
-        ((useDeviceCode) ? 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/33-arc-enabled-linux-server/products/ArcEnabledLinuxServer/scripts/install_arc_agent_deviceCode.sh':'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/33-arc-enabled-linux-server/products/ArcEnabledLinuxServer/scripts/install_arc_agent.sh')
+        ((useDeviceCode)
+          ? 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/products/ArcEnabledLinuxServer/scripts/install_arc_agent_deviceCode.sh'
+          : 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/products/ArcEnabledLinuxServer/scripts/install_arc_agent.sh')
       ]
-      commandToExecute: ((useDeviceCode) ? './install_arc_agent_deviceCode.sh ${adminUsername} ${subscriptionID} ${tenantID} ${resourceGroupanme} ${location} ${vmName}': './install_arc_agent.sh ${adminUsername} ${subscriptionID} ${servicePrincipalClient} ${servicePrincipalClientSecret} ${tenantID} ${resourceGroupanme} ${location} ${vmName}')
+      commandToExecute: ((useDeviceCode)
+        ? './install_arc_agent_deviceCode.sh ${adminUsername} ${subscriptionID} ${tenantID} ${resourceGroupanme} ${location} ${vmName}'
+        : './install_arc_agent.sh ${adminUsername} ${subscriptionID} ${servicePrincipalClient} ${servicePrincipalClientSecret} ${tenantID} ${resourceGroupanme} ${location} ${vmName}')
     }
   }
 }

@@ -138,8 +138,8 @@ module vm 'br/public:avm/res/compute/virtual-machine:0.5.3' = {
       fileData: [
         {
           uri: ((useDeviceCode)
-            ? 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/33-arc-enabled-linux-server/products/ArcEnabledWindowsServer/scropts/install_arc_agent_deviceCode.ps1'
-            : 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/33-arc-enabled-linux-server/products/ArcEnabledWindowsServer/scropts/install_arc_agent.ps1')
+            ? 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/products/ArcEnabledWindowsServer/scropts/install_arc_agent_deviceCode.ps1'
+            : 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/products/ArcEnabledWindowsServer/scropts/install_arc_agent.ps1')
         }
       ]
     }
