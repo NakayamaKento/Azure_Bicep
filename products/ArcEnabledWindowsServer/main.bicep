@@ -211,8 +211,8 @@ resource vmName_ClientTools 'Microsoft.Compute/virtualMachines/extensions@2019-0
     protectedSettings: {
       fileUris: [
         ((useDeviceCode)
-          ? 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/products/ArcEnabledWindowsServer/scropts/install_arc_agent_deviceCode.ps1'
-          : 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/products/ArcEnabledWindowsServer/scropts/install_arc_agent.ps1')
+          ? 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/products/ArcEnabledWindowsServer/scripts/install_arc_agent_deviceCode.ps1'
+          : 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/main/products/ArcEnabledWindowsServer/scripts/install_arc_agent.ps1')
       ]
       commandToExecute: ((useDeviceCode)
         ? 'powershell.exe -ExecutionPolicy Bypass -File install_arc_agent_deviceCode.ps1 -tenantId ${tenantId} -resourceGroup ${resourceGroupName} -subscriptionId ${subscriptionId} -location ${location} -adminUsername ${adminUsername}'
