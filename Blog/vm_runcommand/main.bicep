@@ -82,3 +82,21 @@ module winser2022 'br/public:avm/res/compute/virtual-machine:0.2.3' = {
     vmSize: 'Standard_D4s_v4'
   }
 }
+
+resource vm 'Microsoft.Compute/virtualMachines@2024-03-01' existing = {
+  name: '${prefix}-win2022'
+}
+
+// Managed Run Command
+resource runCommand 'Microsoft.Compute/virtualMachines/runCommands@2024-03-01' = {
+  name: '${prefix}-runcommand'
+  location: resourceGroup().location
+  parent: vm
+  properties: {
+    source: {
+      //script: 'Install-WindowsFeature -Name Web-Server -IncludeManagementTools'
+      //commandId: 'DisableWindowsUpdate'
+      scriptUri: 'https://raw.githubusercontent.com/NakayamaKento/powershell_script/main/install_IIS.ps1'
+    }
+  }
+}
