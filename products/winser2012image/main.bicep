@@ -1,4 +1,4 @@
-@description(' "3.127.20190214" ')
+@description('')
 param winSer2012version string
 
 param location string = resourceGroup().location
