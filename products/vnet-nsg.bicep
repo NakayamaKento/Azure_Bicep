@@ -5,7 +5,7 @@
 
 param location string = 'japaneast'
 param vnetaddress string = '10.0.0.0/16'
-param prefix = 'my'
+param prefix string = 'my'
 
 param allow_rdp bool = false
 param allow_ssh bool = false
