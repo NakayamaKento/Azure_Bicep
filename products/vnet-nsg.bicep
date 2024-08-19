@@ -3,7 +3,7 @@
 サブネットには RDP を許可する NSG を関連付けます
 */
 
-param location string = 'japaneast'
+param location string = resourceGroup().location
 param vnetaddress string = '10.0.0.0/16'
 param prefix string = 'my'
 
