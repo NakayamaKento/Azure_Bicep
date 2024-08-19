@@ -4,9 +4,8 @@
 */
 
 param location string = 'japaneast'
-param vnetName string = 'myVNet'
 param vnetaddress string = '10.0.0.0/16'
-param nsgName string = 'myNSG'
+param prefix = 'my'
 
 param allow_rdp bool = false
 param allow_ssh bool = false
@@ -14,6 +13,9 @@ param allow_ssh bool = false
 param bastion bool = false
 param firewall bool = false
 param gateway bool = false
+
+var nsgName = '${prefix}-nsg'
+var vnetName = '${prefix}-vnet'
 
 // module を使用した NSG の作成
 module nsg './modules/nsg.bicep' = {
