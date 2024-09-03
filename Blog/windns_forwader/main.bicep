@@ -141,7 +141,7 @@ module storageAccount 'br/public:avm/res/storage/storage-account:0.9.1' = {
   name: 'storageaccount'
   params: {
     name: '${uniqueString(resourceGroup().id)}blob'
-    kind: 'BlobStorage'
+    kind: 'StorageV2'
     location: location
     skuName: 'Standard_LRS'
     privateEndpoints: [
