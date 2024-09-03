@@ -125,6 +125,12 @@ module azurePrimaryVnet 'br/public:avm/res/network/virtual-network:0.2.0' = {
         networkSecurityGroupResourceId: azurePrimaryNSG.outputs.resourceId
       }
     ]
+    peerings:[
+      {
+        remoteVirtualNetworkId: onpreVnet.outputs.resourceId
+        remotePeeringEnabled: true
+      }
+    ]
   }
 }
 
@@ -176,6 +182,12 @@ module azureSecondaryVnet 'br/public:avm/res/network/virtual-network:0.2.0' = {
         name: 'subnet-azure-secondary'
         addressPrefix: cidrSubnet(addressSecondaryAzure, 24, 0)
         networkSecurityGroupResourceId: azureSecondaryNSG.outputs.resourceId
+      }
+    ]
+    peerings:[
+      {
+        remoteVirtualNetworkId: onpreVnet.outputs.resourceId
+        remotePeeringEnabled: true
       }
     ]
   }
