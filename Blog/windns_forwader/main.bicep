@@ -44,6 +44,9 @@ module onpreVnet 'br/public:avm/res/network/virtual-network:0.2.0' = {
         networkSecurityGroupResourceId: onpreNSG.outputs.resourceId
       }
     ]
+    dnsServers: [
+      cidrHost(cidrSubnet(addressOnprem, 24, 0), 3)
+    ]
   }
 } 
 
@@ -143,6 +146,12 @@ module privateDNSBlob 'br/public:avm/res/network/private-dns-zone:0.5.0' = {
   name: 'privatedns-zone'
   params: {
     name: 'privatelink.blob.core.windows.net'
+    virtualNetworkLinks: [
+      {
+        registrationEnabled: true
+        virtualNetworkResourceId: azurePrimaryVnet.outputs.resourceId
+      }
+    ]
   }
 }
 
