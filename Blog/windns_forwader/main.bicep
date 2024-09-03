@@ -60,7 +60,7 @@ module windowsDNS 'br/public:avm/res/compute/virtual-machine:0.6.0' = {
     imageReference: {
       publisher: 'MicrosoftWindowsServer'
       offer: 'WindowsServer'
-      sku: '2022-datacenter-azure-edition'
+      sku: '2022-datacenter'
       version: 'latest' 
     }
     nicConfigurations: [
