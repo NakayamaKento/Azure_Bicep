@@ -99,6 +99,9 @@ resource runCommand 'Microsoft.Compute/virtualMachines/runCommands@2024-03-01' =
   name: 'winserDNSruncommand'
   location: location
   parent: vm
+  dependsOn: [
+    windowsDNS
+  ]
   properties: {
     source: {
       scriptUri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/39-blog-windows-server-dns/Blog/windns_forwader/installDNSscript.ps1'
