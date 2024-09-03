@@ -140,7 +140,7 @@ module privateDNSBlob 'br/public:avm/res/network/private-dns-zone:0.5.0' = {
 module storageAccount 'br/public:avm/res/storage/storage-account:0.9.1' = {
   name: 'storageaccount'
   params: {
-    name: 'storageaccount'
+    name: '${uniqueString(resourceGroup().id)}blob'
     kind: 'BlobStorage'
     location: location
     skuName: 'Standard_LRS'
