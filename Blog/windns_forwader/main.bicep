@@ -124,6 +124,10 @@ module azurePrimaryVnet 'br/public:avm/res/network/virtual-network:0.2.0' = {
         addressPrefix: cidrSubnet(addressPrimaryAzure, 24, 0)
         networkSecurityGroupResourceId: azurePrimaryNSG.outputs.resourceId
       }
+      {
+        name: 'subnet-azure-primary-inbound'
+        addressPrefix: cidrSubnet(addressPrimaryAzure, 24, 1)
+      }
     ]
     peerings:[
       {
@@ -162,6 +166,22 @@ module storageAccount 'br/public:avm/res/storage/storage-account:0.9.1' = {
   }
 }
 
+// DNS Private Resolver
+module primaryDNSresolver 'br/public:avm/res/network/dns-resolver:0.4.0' = {
+  name: 'dns-resolver-primary'
+  params: {
+    name: 'dns-resolver-primary'
+    virtualNetworkResourceId: azurePrimaryVnet.outputs.resourceId
+    inboundEndpoints:[
+      {
+        name: 'dns-resolver-primary-inbound'
+        subnetResourceId: azurePrimaryVnet.outputs.subnetResourceIds[1]
+      }
+    ] 
+  }
+}
+
+
 // Create Azure Secondary
 module azureSecondaryNSG 'br/public:avm/res/network/network-security-group:0.4.0' = {
   name: 'nsg-azure-secondary'
@@ -183,6 +203,10 @@ module azureSecondaryVnet 'br/public:avm/res/network/virtual-network:0.2.0' = {
         addressPrefix: cidrSubnet(addressSecondaryAzure, 24, 0)
         networkSecurityGroupResourceId: azureSecondaryNSG.outputs.resourceId
       }
+      {
+        name: 'subnet-azure-secondary-inbound'
+        addressPrefix: cidrSubnet(addressSecondaryAzure, 24, 1)
+      }
     ]
     peerings:[
       {
@@ -193,3 +217,16 @@ module azureSecondaryVnet 'br/public:avm/res/network/virtual-network:0.2.0' = {
   }
 }
 
+module secondaryDNSresolver 'br/public:avm/res/network/dns-resolver:0.4.0' = {
+  name: 'dns-resolver-secondary'
+  params: {
+    name: 'dns-resolver-secondary'
+    virtualNetworkResourceId: azureSecondaryVnet.outputs.resourceId
+    inboundEndpoints:[
+      {
+        name: 'dns-resolver-primary-inbound'
+        subnetResourceId: azureSecondaryVnet.outputs.subnetResourceIds[1]
+      }
+    ] 
+  }
+}
