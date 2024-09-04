@@ -6,6 +6,9 @@ param vmUsername string = 'AzureAdmin'
 @secure()
 param vmPassword string
 
+var primaryDNSresolverIP = cidrHost(cidrSubnet(addressPrimaryAzure, 24, 1), 3)
+var secondaryDNSresolverIP = cidrHost(cidrSubnet(addressSecondaryAzure, 24, 1), 3)
+var scriptDNSserver = 'Install-WindowsFeature -Name DNS -IncludeManagementTools; Set-DnsServerForwarder -IPAddress ("${primaryDNSresolverIP}","${secondaryDNSresolverIP}")'
 
 // Create Onprem
 module onpreNSG 'br/public:avm/res/network/network-security-group:0.4.0' = {
@@ -104,7 +107,7 @@ resource runCommand 'Microsoft.Compute/virtualMachines/runCommands@2024-03-01' =
   ]
   properties: {
     source: { // カスタム DNS サーバーを入れているため、ファイルのダウンロードの名前解決に失敗する。そのため、スクリプトをそのまま記載
-      script: 'Install-WindowsFeature -Name DNS -IncludeManagementTools; Set-DnsServerForwarder -IPAddress ("10.1.1.4","10.2.1.4")'
+      script: scriptDNSserver
     }
   }
 }
