@@ -87,27 +87,38 @@ module windowsDNS 'br/public:avm/res/compute/virtual-machine:0.6.0' = {
     osType: 'Windows'
     vmSize: 'Standard_D4s_v4'
     zone: 0
-  }
-}
-
-resource vm 'Microsoft.Compute/virtualMachines@2024-03-01' existing = {
-  name: windowsDNS.name
-}
-
-// Managed Run Command
-resource runCommand 'Microsoft.Compute/virtualMachines/runCommands@2024-03-01' = {
-  name: 'winserDNSruncommand'
-  location: location
-  parent: vm
-  dependsOn: [
-    windowsDNS
-  ]
-  properties: {
-    source: {
-      scriptUri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/39-blog-windows-server-dns/Blog/windns_forwader/installDNSscript.ps1'
+    extensionCustomScriptConfig: {
+      enabled: true
+      fileData: [
+        {
+          uri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/39-blog-windows-server-dns/Blog/windns_forwader/installDNSscript.ps1'
+        }
+      ]
+    }
+    extensionCustomScriptProtectedSetting: {
+      commandToExecute:'powershell.exe -ExecutionPolicy Bypass -File installDNSscript.ps1'
     }
   }
 }
+
+// resource vm 'Microsoft.Compute/virtualMachines@2024-03-01' existing = {
+//   name: windowsDNS.name
+// }
+
+// // Managed Run Command
+// resource runCommand 'Microsoft.Compute/virtualMachines/runCommands@2024-03-01' = {
+//   name: 'winserDNSruncommand'
+//   location: location
+//   parent: vm
+//   dependsOn: [
+//     windowsDNS
+//   ]
+//   properties: {
+//     source: {
+//       scriptUri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/39-blog-windows-server-dns/Blog/windns_forwader/installDNSscript.ps1'
+//     }
+//   }
+// }
 
 // Create Azure Primary
 module azurePrimaryNSG 'br/public:avm/res/network/network-security-group:0.4.0' = {
