@@ -16,12 +16,8 @@ end
 
 subgraph Vnet2[Secondary Vnet]
     DNS2["Azure DNS Private Resolver"]
-    PE2["Private Endpoint2"]
 end
 EX2{{"Vnet Peering"}}
-subgraph zone2["Azure DNS Private Zone"]
-    A2["A Record"]
-end
 
 subgraph OnPrem[オンプレを想定した Vnet]
     DNSC["オンプレ DNS Server"]
@@ -35,7 +31,6 @@ EX2 --> OnPrem
 DNSC --> OnPrem
 
 zone1 -.-> Vnet1
-zone2 -.-> Vnet2
 
 %%サブグラフのスタイル
 classDef VnetG fill:none,color:#0a0,stroke:#0a0

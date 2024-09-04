@@ -6,6 +6,9 @@ param vmUsername string = 'AzureAdmin'
 @secure()
 param vmPassword string
 
+var primaryDNSresolverIP = cidrHost(cidrSubnet(addressPrimaryAzure, 24, 1), 3)
+var secondaryDNSresolverIP = cidrHost(cidrSubnet(addressSecondaryAzure, 24, 1), 3)
+var scriptDNSserver = 'Install-WindowsFeature -Name DNS -IncludeManagementTools; Set-DnsServerForwarder -IPAddress ("${primaryDNSresolverIP}","${secondaryDNSresolverIP}")'
 
 // Create Onprem
 module onpreNSG 'br/public:avm/res/network/network-security-group:0.4.0' = {
@@ -87,38 +90,27 @@ module windowsDNS 'br/public:avm/res/compute/virtual-machine:0.6.0' = {
     osType: 'Windows'
     vmSize: 'Standard_D4s_v4'
     zone: 0
-    extensionCustomScriptConfig: {
-      enabled: true
-      fileData: [
-        {
-          uri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/39-blog-windows-server-dns/Blog/windns_forwader/installDNSscript.ps1'
-        }
-      ]
-    }
-    extensionCustomScriptProtectedSetting: {
-      commandToExecute:'powershell.exe -ExecutionPolicy Bypass -File installDNSscript.ps1'
-    }
   }
 }
 
-// resource vm 'Microsoft.Compute/virtualMachines@2024-03-01' existing = {
-//   name: windowsDNS.name
-// }
+resource vm 'Microsoft.Compute/virtualMachines@2024-03-01' existing = {
+  name: windowsDNS.name
+}
 
-// // Managed Run Command
-// resource runCommand 'Microsoft.Compute/virtualMachines/runCommands@2024-03-01' = {
-//   name: 'winserDNSruncommand'
-//   location: location
-//   parent: vm
-//   dependsOn: [
-//     windowsDNS
-//   ]
-//   properties: {
-//     source: {
-//       scriptUri: 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/39-blog-windows-server-dns/Blog/windns_forwader/installDNSscript.ps1'
-//     }
-//   }
-// }
+// Managed Run Command
+resource runCommand 'Microsoft.Compute/virtualMachines/runCommands@2024-03-01' = {
+  name: 'winserDNSruncommand'
+  location: location
+  parent: vm
+  dependsOn: [
+    windowsDNS
+  ]
+  properties: {
+    source: { // カスタム DNS サーバーを入れているため、ファイルのダウンロードの名前解決に失敗する。そのため、スクリプトをそのまま記載
+      script: scriptDNSserver
+    }
+  }
+}
 
 // Create Azure Primary
 module azurePrimaryNSG 'br/public:avm/res/network/network-security-group:0.4.0' = {
@@ -253,3 +245,6 @@ module secondaryDNSresolver 'br/public:avm/res/network/dns-resolver:0.4.0' = {
     ] 
   }
 }
+
+output storageAccountName string = storageAccount.outputs.name
+output storageAccountEndpoint string = storageAccount.outputs.primaryBlobEndpoint
