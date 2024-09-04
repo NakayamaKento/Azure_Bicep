@@ -245,3 +245,6 @@ module secondaryDNSresolver 'br/public:avm/res/network/dns-resolver:0.4.0' = {
     ] 
   }
 }
+
+output storageAccountName string = storageAccount.outputs.name
+output storageAccountEndpoint string = storageAccount.outputs.primaryBlobEndpoint
