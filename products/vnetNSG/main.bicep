@@ -5,77 +5,109 @@
 
 param location string = resourceGroup().location
 param vnetaddress string = '10.0.0.0/16'
-param prefix string = 'my'
+param name string = 'hoge'
 
 param allow_rdp bool = false
 param allow_ssh bool = false
 
-param bastion bool = false
-param firewall bool = false
-param gateway bool = false
+var nsgName = 'nsg-${name}'
+var vnetName = 'vnet-${name}'
 
-var nsgName = '${prefix}-nsg'
-var vnetName = '${prefix}-vnet'
 
 // module を使用した NSG の作成
-module nsg './modules/nsg.bicep' = {
+module nsg 'br/public:avm/res/network/network-security-group:0.4.0' = {
   name: nsgName
   params: {
     location: location
-    Name: nsgName
+    name: nsgName
+    securityRules: [
+      (allow_rdp) ? {
+        name: 'allowRDP'
+        properties: {
+          access: 'Allow'
+          description: 'Tests specific IPs and ports'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '3389'
+          direction: 'Inbound'
+          priority: 100
+          protocol: '*'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+        }
+      }
+    : {
+      name: 'denyRDP'
+        properties: {
+          access: 'Deny'
+          description: 'Tests specific IPs and ports'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '3389'
+          direction: 'Inbound'
+          priority: 100
+          protocol: '*'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+        }
+    }
+  (allow_ssh) ? {
+    name: 'allowSSH'
+    properties: {
+      access: 'Allow'
+      description: 'Tests specific IPs and ports'
+      destinationAddressPrefix: '*'
+      destinationPortRange: '22'
+      direction: 'Inbound'
+      priority: 101
+      protocol: '*'
+      sourceAddressPrefix: '*'
+      sourcePortRange: '*'
+    }
+      }
+    :  {
+      name: 'denySSH'
+        properties: {
+          access: 'Deny'
+          description: 'Tests specific IPs and ports'
+          destinationAddressPrefix: '*'
+          destinationPortRange: '22'
+          direction: 'Inbound'
+          priority: 101
+          protocol: '*'
+          sourceAddressPrefix: '*'
+          sourcePortRange: '*'
+        }
+    }
+    ]
   }
 }
 
-// module を使用した NSG ルールの作成
-module allow_rdp_rule 'modules/nsg-rules.bicep' = if (allow_rdp) {
-  name: 'allow_rdp_rule'
-  params: {
-    nsgName: nsgName
-    ruleName: 'allowRDP'
-    priority: 100
-    direction: 'Inbound'
-    access: 'Allow'
-    protocol: 'TCP'
-    sourcePortRange: '*'
-    destinationPortRange: '3389'
-    sourceAddressPrefix: '*'
-    destinationAddressPrefix: '*'
-  }
-  dependsOn: [
-    nsg
-  ]
-}
-
-// module を使用した NSG ルールの作成
-module allow_ssh_rule 'modules/nsg-rules.bicep' = if (allow_ssh) {
-  name: 'allow_ssh_rule'
-  params: {
-    nsgName: nsgName
-    ruleName: 'allowSSH'
-    priority: 101
-    direction: 'Inbound'
-    access: 'Allow'
-    protocol: 'TCP'
-    sourcePortRange: '*'
-    destinationPortRange: '22'
-    sourceAddressPrefix: '*'
-    destinationAddressPrefix: '*'
-  }
-  dependsOn: [
-    nsg
-  ]
-}
 
 // module を使用した Vnet の作成
-module vnet './modules/vnet.bicep' = {
+module vnet 'br/public:avm/res/network/virtual-network:0.3.0' = {
   name: vnetName
   params: {
-    Name: vnetName
-    vnetAddress: vnetaddress
-    location: location
-    nsgid: nsg.outputs.nsgId
-    bastion: bastion
-    firewall: firewall
-    gateway: gateway
+    name: vnetName
+    addressPrefixes: [
+      vnetaddress
+    ]
+    subnets:[
+      {
+        name: 'default'
+        addressPrefix: cidrSubnet(vnetaddress, 24, 0)
+        networkSecurityGroupResourceId: nsg.outputs.resourceId
+      }
+      {
+        name: 'AzureBastionSubnet'
+        addressPrefix: cidrSubnet(vnetaddress, 24, 1)
+      }
+      {
+        name: 'AzureFirewallSubnet'
+        addressPrefix: cidrSubnet(vnetaddress, 24, 2)
+      }
+      {
+        name: 'GatewaySubnet'
+        addressPrefix: cidrSubnet(vnetaddress, 24, 3)
+      }
+    ]
   }
 }
