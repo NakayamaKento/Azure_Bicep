@@ -27,7 +27,7 @@ jobs:
         - name: Get Azure VM Image
           id: get-image
           run: |
-                image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2025-datacenter-azure-edition --all --query "[?sku=='2025-datacenter-azure-edition'].version")
+                image=$(az vm image list --offer WindowsServer --publisher MicrosoftWindowsServer --sku 2025-datacenter-g2 --all --query "[?sku=='2025-datacenter-g2'].version")
                 imagelist=`echo $image | tr -d '[\r\n[],]'`
                 imagedescription="@description('$imagelist')"
                 sed -i -e "1s/^.*$/$imagedescription/g" ./products/ArcEnabledWindowsServer2025/avm_main.bicep

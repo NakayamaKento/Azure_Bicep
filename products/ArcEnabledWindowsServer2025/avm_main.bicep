@@ -114,7 +114,7 @@ module vm 'br/public:avm/res/compute/virtual-machine:0.5.3' = {
     imageReference: {
       publisher: 'MicrosoftWindowsServer'
       offer: 'WindowsServer'
-      sku: '2025-datacenter-azure-edition'
+      sku: '2025-datacenter-g2'
       version: winSer2025version
     }
     name: '${prefix}-arcvm2025'
