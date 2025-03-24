@@ -107,7 +107,7 @@ module vnet 'br/public:avm/res/network/virtual-network:0.1.8' = {
 
 // VM
 module vm 'br/public:avm/res/compute/virtual-machine:0.5.3' = {
-  name: '${prefix}-arcvm'
+  name: '${prefix}-arcvm2025'
   params: {
     adminUsername: vmUserName
     adminPassword: vmPassword
@@ -117,7 +117,7 @@ module vm 'br/public:avm/res/compute/virtual-machine:0.5.3' = {
       sku: '2025-datacenter-azure-edition'
       version: winSer2025version
     }
-    name: '${prefix}-arcvm'
+    name: '${prefix}-arcvm2025'
     nicConfigurations: [
       {
         nicSuffix: '-nic'
