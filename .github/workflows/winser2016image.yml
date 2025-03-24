@@ -42,4 +42,4 @@ jobs:
                 git push
         - name: Deploy Template Spec
           run: |
-                az ts create --name winser2016vm --location japaneast --resource-group templateSpecRG --version ${{ github.run_number }} --template-file ./products/winser2016image/main.bicep
+                az ts create --name winser2016vm --location japaneast --resource-group rg-templateSpecs --version ${{ github.run_number }} --template-file ./products/winser2016image/main.bicep
