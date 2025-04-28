@@ -12,27 +12,25 @@ param resourceTags object
 var automationAccountName = 'HCIBox-Automation-${uniqueString(resourceGroup().id)}'
 var automationAccountLocation = ((location == 'eastus') ? 'eastus2' : ((location == 'eastus2') ? 'eastus' : location))
 
-resource workspace 'Microsoft.OperationalInsights/workspaces@2021-06-01' = {
-  name: workspaceName
-  location: location
-  properties: {
-    sku: {
-      name: sku
-    }
+// Create a Log Analytics Workspace by Azure Verified Module
+module workspace 'br/public:avm/res/operational-insights/workspace:0.11.1' = {
+  params: {
+    name: workspaceName
+    location: location
+    skuName: sku
+    tags: resourceTags
   }
-  tags: resourceTags
 }
 
-resource automationAccount 'Microsoft.Automation/automationAccounts@2021-06-22' = {
-  name: automationAccountName
-  location: automationAccountLocation
-  properties: {
-    sku: {
-      name: 'Basic'
-    }
+// Create a Automation Account by Azure Verified Module
+module automationAccount 'br/public:avm/res/automation/automation-account:0.14.1' = {
+  params: {
+    name: automationAccountName
+    location: automationAccountLocation
+    skuName: 'Basic'
+    tags: resourceTags
   }
   dependsOn: [
     workspace
   ]
-  tags: resourceTags
 }
