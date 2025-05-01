@@ -38,3 +38,64 @@ graph TD
   style Bastion fill:#f7c6c6,stroke:#d92b2b,stroke-width:2px
   style PIP fill:#c6d9f7,stroke:#2b5fd9,stroke-width:1px
 ```
+
+## storage.bicep
+```mermaid
+graph TD
+    subgraph ResourceGroup["Resource Group"]
+        direction TB
+        StorageAccount["Storage Account<br>Type: StorageV2<br>SKU: Standard_LRS (default)"]
+    end
+
+    %% ストレージアカウントのスタイル設定（青色）
+    style StorageAccount fill:#ADD8E6,stroke:#000,stroke-width:2
+```
+
+## host.bicep
+```mermaid
+graph TD
+  subgraph ResourceGroup["Resource Group"]
+    direction TB
+    VM["Virtual Machine (Windows)"]
+    OS_Disk["OS Disk (Managed Disk)"]
+    Data_Disk["Data Disk (Managed Disk) x8"]
+    PublicIP["Public IP Address"]
+    NIC["Network Interface"]
+    Subnet["Subnet"]
+    RoleAssignment["Role Assignment (ResourceGroup, Owner)"]
+    ManagedIdentity["Managed Identity"]
+    CustomScript["Custom Script Extension"]
+    StorageAccount["Staging Storage Account"]
+    LogAnalytics["Log Analytics Workspace"]
+
+    VM --> OS_Disk
+    VM --> Data_Disk
+    VM --> NIC
+    NIC --> Subnet
+    NIC --> PublicIP
+    VM --> ManagedIdentity
+    ManagedIdentity --> RoleAssignment
+    VM --> CustomScript
+    CustomScript --> StorageAccount
+    CustomScript --> LogAnalytics
+  end
+
+  %% 色分け
+  %% コンピュート系 (オレンジ系)
+  style VM fill:#FFA07A,stroke:#333,stroke-width:2px
+  %% ディスク系 (青系)
+  style OS_Disk fill:#ADD8E6,stroke:#333,stroke-width:2px
+  style Data_Disk fill:#ADD8E6,stroke:#333,stroke-width:2px 
+  %% ネットワーク系 (緑系)
+  style PublicIP fill:#90EE90,stroke:#333,stroke-width:2px
+  style NIC fill:#90EE90,stroke:#333,stroke-width:2px
+  style Subnet fill:#90EE90,stroke:#333,stroke-width:2px
+  %% セキュリティ系 (赤系)
+  style RoleAssignment fill:#FFB6C1,stroke:#333,stroke-width:2px
+  style ManagedIdentity fill:#FFB6C1,stroke:#333,stroke-width:2px
+  %% その他 (黄色系)
+  style CustomScript fill:#FFD700,stroke:#333,stroke-width:2px
+  %% データストレージ系 (青系)
+  style StorageAccount fill:#ADD8E6,stroke:#333,stroke-width:2px
+  style LogAnalytics fill:#ADD8E6,stroke:#333,stroke-width:2px
+```
