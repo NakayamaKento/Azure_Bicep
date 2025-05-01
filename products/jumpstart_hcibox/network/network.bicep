@@ -68,7 +68,7 @@ module networkSecurityGroup 'br/public:avm/res/network/network-security-group:0.
 }
 
 // Create Network Security Group for Bastion by Azure Verified Module
-module bastionNetworkSecurityGroup 'br/public:avm/res/network/network-security-group:0.5.1' = {
+module bastionNetworkSecurityGroup 'br/public:avm/res/network/network-security-group:0.5.1' = if (deployBastion == true)  {
   params: {
     name: bastionNetworkSecurityGroupName
     location: location
@@ -195,7 +195,7 @@ module bastionNetworkSecurityGroup 'br/public:avm/res/network/network-security-g
 }
 
 // Create Public IP Address for Bastion by Azure Verified Module
-module publicIpAddress 'br/public:avm/res/network/public-ip-address:0.8.0' = {
+module publicIpAddress 'br/public:avm/res/network/public-ip-address:0.8.0' = if (deployBastion == true)  {
   params: {
     name: bastionPublicIpAddressName
     location: location
@@ -208,7 +208,7 @@ module publicIpAddress 'br/public:avm/res/network/public-ip-address:0.8.0' = {
 }
 
 // Create Bastion Host by Azure Verified Module
-module bastionHost1 'br/public:avm/res/network/bastion-host:0.6.1' = {
+module bastionHost1 'br/public:avm/res/network/bastion-host:0.6.1' = if (deployBastion == true)  {
   params: {
     name: bastionName
     location: location

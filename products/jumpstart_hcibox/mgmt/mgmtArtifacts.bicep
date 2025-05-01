@@ -5,7 +5,7 @@ param workspaceName string
 param location string = resourceGroup().location
 
 @description('SKU, leave default pergb2018')
-param sku string = 'pergb2018'
+param sku string = 'PerGB2018'
 
 param resourceTags object
 
