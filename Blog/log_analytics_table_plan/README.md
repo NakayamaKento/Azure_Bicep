@@ -38,6 +38,24 @@
 
 ### デプロイ
 
+パラメータファイルを使用する場合：
+
+```bash
+# リソースグループの作成
+az group create --name rg-logaplan --location japaneast
+
+# パラメータファイルを編集してパスワードを設定
+# main.parameters.json の adminPassword の値を更新
+
+# Bicep ファイルのデプロイ
+az deployment group create \
+  --resource-group rg-logaplan \
+  --template-file main.bicep \
+  --parameters main.parameters.json
+```
+
+または、コマンドラインでパラメータを指定：
+
 ```bash
 # リソースグループの作成
 az group create --name rg-logaplan --location japaneast

@@ -1,0 +1,21 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "location": {
+      "value": "japaneast"
+    },
+    "prefix": {
+      "value": "logaplan"
+    },
+    "vnetAddress": {
+      "value": "10.0.0.0/16"
+    },
+    "adminUsername": {
+      "value": "AzureAdmin"
+    },
+    "adminPassword": {
+      "value": "SET_YOUR_PASSWORD_HERE"
+    }
+  }
+}
