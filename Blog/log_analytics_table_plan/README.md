@@ -20,7 +20,8 @@
    - カスタムテーブルを格納するための ワークスペース
 
 5. **Deployment Script (デプロイメントスクリプト)**
-   - Log Analytics にカスタムテーブル (`CustomTable_CL`) を作成
+   - Log Analytics にカスタムテーブル (`iislog_CL`) を作成
+   - IIS ログデータ用のテーブルスキーマ (TimeGenerated, cIP, scStatus)
    - マネージド ID を使用して認証
 
 6. **Data Collection Rules (データ収集ルール)**
@@ -89,7 +90,7 @@ az deployment group create \
 - `{prefix}-create-table-script`: デプロイメントスクリプト
 - `{prefix}-dce`: データ収集エンドポイント
 - `{prefix}-dcr`: データ収集ルール
-- `CustomTable_CL`: カスタムログテーブル (Log Analytics 内)
+- `iislog_CL`: IIS ログ用カスタムテーブル (Log Analytics 内)
 
 ## 出力
 
@@ -105,11 +106,16 @@ az deployment group create \
 
 ## Table Plan について
 
-カスタムテーブルは `Analytics` プランで作成されます。このプランでは：
+カスタムテーブル (`iislog_CL`) は `Auxiliary` プランで作成されます。このプランでは：
 
-- 30日間のデータ保持
-- フルクエリ機能
-- 高度な分析機能
+- 低コストでのデータ保存
+- 基本的なクエリ機能
+- IIS ログなどの補助的なデータに最適
+
+テーブルスキーマ：
+- `TimeGenerated`: ログのタイムスタンプ (DateTime)
+- `cIP`: クライアント IP アドレス (string)
+- `scStatus`: HTTP ステータスコード (string)
 
 ## 注意事項
 

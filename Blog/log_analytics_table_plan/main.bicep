@@ -9,7 +9,7 @@ param adminPassword string
 
 // Variables
 var logAnalyticsWorkspaceName = '${prefix}-law'
-var customTableName = 'CustomTable_CL'
+var customTableName = 'iislog_CL'
 var userAssignedIdentityName = '${prefix}-identity'
 var roleAssignmentName = guid(resourceGroup().id, 'contributor')
 var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
@@ -161,64 +161,50 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
       }
     ]
     scriptContent: '''
-      # Install required modules
-      Install-Module -Name Az.OperationalInsights -Force -AllowClobber -Scope CurrentUser
-      
       # Connect using Managed Identity
       Connect-AzAccount -Identity
       
       # Create custom table schema
-      $tableSchema = @{
-        properties = @{
-          schema = @{
-            name = $env:TableName
-            columns = @(
-              @{
-                name = "TimeGenerated"
-                type = "datetime"
-              }
-              @{
-                name = "RawData"
-                type = "string"
-              }
-              @{
-                name = "EventLevel"
-                type = "string"
-              }
-              @{
-                name = "EventMessage"
-                type = "string"
-              }
-            )
-          }
-          retentionInDays = 30
-          plan = "Analytics"
-        }
-      }
-      
-      # Convert to JSON
-      $tableJson = $tableSchema | ConvertTo-Json -Depth 10
+      $tableParams = @'
+{
+    "properties": {
+        "schema": {
+               "name": "iislog_CL",
+               "columns": [
+                    {
+                        "name": "TimeGenerated",
+                        "type": "DateTime"
+                    },
+                    {
+                        "name": "cIP",
+                        "type": "string"
+                    },
+                    {
+                        "name": "scStatus",
+                        "type": "string"
+                    }
+              ]
+        },
+        "plan": "Auxiliary"
+    }
+}
+'@
       
       Write-Output "Creating custom table: $env:TableName"
-      Write-Output "Table Schema: $tableJson"
+      Write-Output "Table Schema: $tableParams"
       
-      # Create the table using REST API
-      $managementUrl = (Get-AzEnvironment -Name (Get-AzContext).Environment).ResourceManagerUrl
-      $workspaceResourceId = "/subscriptions/$((Get-AzContext).Subscription.Id)/resourceGroups/$env:ResourceGroupName/providers/Microsoft.OperationalInsights/workspaces/$env:WorkspaceName"
-      $tableUri = "${managementUrl}${workspaceResourceId}/tables/${env:TableName}?api-version=2022-10-01"
-      
-      $token = (Get-AzAccessToken -ResourceUrl $managementUrl).Token
-      $headers = @{
-        "Authorization" = "Bearer $token"
-        "Content-Type" = "application/json"
-      }
+      # Create the table using Invoke-AzRestMethod
+      $subscriptionId = (Get-AzContext).Subscription.Id
+      $path = "/subscriptions/$subscriptionId/resourcegroups/$env:ResourceGroupName/providers/microsoft.operationalinsights/workspaces/$env:WorkspaceName/tables/$env:TableName?api-version=2023-01-01-preview"
       
       try {
-        $response = Invoke-RestMethod -Uri $tableUri -Method Put -Headers $headers -Body $tableJson
+        $response = Invoke-AzRestMethod -Path $path -Method PUT -Payload $tableParams
         Write-Output "Custom table created successfully"
+        Write-Output "Response Status Code: $($response.StatusCode)"
         $DeploymentScriptOutputs = @{}
         $DeploymentScriptOutputs['tableName'] = $env:TableName
         $DeploymentScriptOutputs['status'] = 'Success'
+        $DeploymentScriptOutputs['statusCode'] = $response.StatusCode
       } catch {
         Write-Error "Failed to create custom table: $_"
         throw
@@ -253,22 +239,18 @@ resource dataCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' 
   properties: {
     dataCollectionEndpointId: dataCollectionEndpoint.id
     streamDeclarations: {
-      'Custom-MyTableStream': {
+      'Custom-IISLogStream': {
         columns: [
           {
             name: 'TimeGenerated'
             type: 'datetime'
           }
           {
-            name: 'RawData'
+            name: 'cIP'
             type: 'string'
           }
           {
-            name: 'EventLevel'
-            type: 'string'
-          }
-          {
-            name: 'EventMessage'
+            name: 'scStatus'
             type: 'string'
           }
         ]
@@ -285,7 +267,7 @@ resource dataCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' 
     dataFlows: [
       {
         streams: [
-          'Custom-MyTableStream'
+          'Custom-IISLogStream'
         ]
         destinations: [
           'lawDestination'
