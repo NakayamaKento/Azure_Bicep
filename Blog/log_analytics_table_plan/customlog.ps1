@@ -10,7 +10,7 @@ param(
     [bool]$IncludeScheduledEvents = $true,
     [bool]$ContinuousMode = $true,
     [ValidateSet("Text","Json")]
-    [string]$OutputFormat = "Text" # Azure Monitor カスタムテキストログ取り込みを既定に
+    [string]$OutputFormat = "Text" # Default: Azure Monitor custom text log ingestion
 )
 
 # Error handling and logging setup
@@ -192,7 +192,7 @@ function Save-IMDSData {
     }
 }
 
-# 新: カスタムテキストログ 1 行レコード保存 (または従来 JSON) 用関数
+# Save a single IMDS record as custom text log line (or legacy JSON per cycle)
 function Save-IMDSRecord {
     param(
         [object]$Data,
@@ -206,7 +206,7 @@ function Save-IMDSRecord {
         Ensure-Directory -Path $Directory
 
         if ($OutputFormat -eq "Json") {
-            # 旧方式互換 (サイクル毎 JSON ファイル)
+            # Legacy mode: JSON file per cycle
             $timestamp = Get-Date -Format "yyyyMMdd-HHmmss"
             $filename = "imds-data-$timestamp.json"
             $filepath = Join-Path $Directory $filename
@@ -216,11 +216,11 @@ function Save-IMDSRecord {
             Remove-OldFiles -Directory $Directory -Prefix "imds-data" -MaxAgeHours 24
         }
         else {
-            # 新方式: 単一ログファイルへ 1 行追記
+            # New mode: append one line into a single log file
             $logFile = Join-Path $Directory "imds-customtext.log"
             $line = Build-IMDSLogLine -Data $Data -CycleNumber $CycleNumber -Level $Status -Category $Category
             Append-LineWithRetry -Path $logFile -Value $line -MaxRetries 6 -DelayMs 180
-            # 内部ログ出力を抑止: 2行出力を避けるため (必要なら -Verbose で確認)
+            # Suppress extra console log here; use -Verbose if needed
             Write-Verbose "Appended (retry-safe) custom text log line to: $logFile"
         }
     }
@@ -230,7 +230,7 @@ function Save-IMDSRecord {
     }
 }
 
-# 新: テキストログ 1 行構築
+# Build one log line for text-based custom log
 function Build-IMDSLogLine {
     param(
         [object]$Data,
@@ -289,7 +289,7 @@ function Build-IMDSLogLine {
     return "{0},{1},{2},{3},{4}" -f $timestamp,$eventId,$Level,$Category,$message
 }
 
-# 追加: ファイルロック競合を緩和する再試行付き安全追記関数
+# Append one line to a file with retry to mitigate file lock contention
 function Append-LineWithRetry {
     param(
         [Parameter(Mandatory=$true)][string]$Path,
@@ -314,12 +314,12 @@ function Append-LineWithRetry {
         catch {
             $err = $_
             if ($attempt -eq $MaxRetries) {
-                Write-LogMessage "Append-LineWithRetry: 最大再試行到達 (attempt=$attempt) - $err" -Level "ERROR"
+                Write-LogMessage "Append-LineWithRetry: reached max retry (attempt=$attempt) - $err" -Level "ERROR"
                 throw
             }
             else {
-                Write-LogMessage "Append-LineWithRetry: 追記失敗 (attempt=$attempt) - $err" -Level "WARN"
-                # 線形ではなく緩やかな指数的待機
+                Write-LogMessage "Append-LineWithRetry: append failed (attempt=$attempt) - $err" -Level "WARN"
+                # Use gentle exponential backoff instead of linear wait
                 $sleep = [int]($DelayMs * [math]::Pow(1.6, ($attempt - 1)))
                 Start-Sleep -Milliseconds $sleep
             }
@@ -381,7 +381,7 @@ function Start-IMDSCollection {
     Write-LogMessage "Configuration: Directory=$LogDirectory, Interval=$IntervalSeconds seconds, Continuous=$ContinuousMode, OutputFormat=$OutputFormat"
 
     if (-not (Test-AzureVM)) {
-        Write-LogMessage "IMDS がまだ利用できないか、Azure VM ではない可能性がありますが、ループを継続します" -Level "WARN"
+        Write-LogMessage "IMDS is not reachable or this might not be an Azure VM. Will continue the loop and retry." -Level "WARN"
     }
 
     Ensure-Directory -Path $LogDirectory
@@ -463,19 +463,19 @@ finally {
 # Usage Examples:
 # 
 # Basic usage (1-minute intervals, continuous mode):
-# .\windowsimds.ps1  # (既定 Text 出力 => C:\Logs\imds-customtext.log)
+# .\customlog.ps1  # default Text output => C:\Logs\imds-customtext.log
 #
 # Custom interval and directory:
-# .\windowsimds.ps1 -LogDirectory "D:\Monitoring\IMDS" -IntervalSeconds 30
+# .\customlog.ps1 -LogDirectory "D:\Monitoring\IMDS" -IntervalSeconds 30
 #
 # One-time collection (non-continuous):
-# .\windowsimds.ps1 -ContinuousMode $false
+# .\customlog.ps1 -ContinuousMode $false
 #
 # Include all optional data:
-# .\windowsimds.ps1 -IncludeAttestationData $true -IncludeScheduledEvents $true
+# .\customlog.ps1 -IncludeAttestationData $true -IncludeScheduledEvents $true
 #
-# JSON 形式へ戻したい場合:
-# .\windowsimds.ps1 -OutputFormat Json
+# Switch back to JSON mode:
+# .\customlog.ps1 -OutputFormat Json
 #
 # Run as Windows Service:
 # Use tools like NSSM to run this script as a Windows service for production scenarios
