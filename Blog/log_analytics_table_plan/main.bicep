@@ -14,12 +14,17 @@ var userAssignedIdentityName = '${prefix}-identity'
 var roleAssignmentName = guid(resourceGroup().id, 'contributor')
 var contributorRoleDefinitionId = resourceId('Microsoft.Authorization/roleDefinitions', 'b24988ac-6180-42a0-ab88-20f7382dd24c')
 var deploymentScriptName = '${prefix}-create-table-script'
+var storageAccountName = '${replace(prefix, '-', '')}sa${uniqueString(resourceGroup().id)}'
+// scripts を格納するコンテナ/パスは後から変更できるように変数化
+// 例: 'scripts' や 'scripts/imds'
+var scriptContainerPath = 'scripts'
 
 // Create Network Security Group
 module nsg 'br/public:avm/res/network/network-security-group:0.4.0' = {
   name: '${prefix}-nsg-deploy'
   params: {
     name: '${prefix}-nsg'
+    location: location
     securityRules: [
       {
         name: 'AllowRDP'
@@ -42,6 +47,7 @@ module nsg 'br/public:avm/res/network/network-security-group:0.4.0' = {
 module vnet 'br/public:avm/res/network/virtual-network:0.2.0' = {
   name: '${prefix}-vnet-deploy'
   params: {
+    location: location
     name: '${prefix}-vnet'
     addressPrefixes: [
       vnetAddress
@@ -53,6 +59,26 @@ module vnet 'br/public:avm/res/network/virtual-network:0.2.0' = {
         networkSecurityGroupResourceId: nsg.outputs.resourceId
       }
     ]
+  }
+}
+
+// Create Storage Account for Deployment Script
+resource storageAccount 'Microsoft.Storage/storageAccounts@2023-01-01' = {
+  name: storageAccountName
+  location: location
+  sku: {
+    name: 'Standard_LRS'
+  }
+  kind: 'StorageV2'
+  properties: {
+    accessTier: 'Hot'
+    allowBlobPublicAccess: false
+    minimumTlsVersion: 'TLS1_2'
+    supportsHttpsTrafficOnly: true
+    allowSharedKeyAccess: true
+  }
+  tags: {
+    SecurityControl: 'Ignore'
   }
 }
 
@@ -109,6 +135,27 @@ module windowsVM 'br/public:avm/res/compute/virtual-machine:0.6.0' = {
     osType: 'Windows'
     vmSize: 'Standard_D4s_v4'
     zone: 0
+    extensionMonitoringAgentConfig: {
+      dataCollectionRuleAssociations: [
+        {
+          dataCollectionRuleResourceId: dataCollectionRule.id
+          name: 'SendLogToLAW'
+        }
+      ]
+      enabled: true
+      name: 'myMonitoringAgent'
+    }
+    extensionCustomScriptConfig: {
+      enabled: true
+      fileData: [
+        {
+          uri: scriptContainerPath
+        }
+      ]
+    }
+    extensionCustomScriptProtectedSetting:{
+      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File customlog.ps1'
+    }
   }
 }
 
@@ -142,6 +189,10 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
   properties: {
     azPowerShellVersion: '11.0'
     retentionInterval: 'P1D'
+    storageAccountSettings: {
+      storageAccountName: storageAccount.name
+      storageAccountKey: storageAccount.listKeys().keys[0].value
+    }
     environmentVariables: [
       {
         name: 'WorkspaceId'
@@ -163,81 +214,65 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
     scriptContent: '''
       # Connect using Managed Identity
       Connect-AzAccount -Identity
-      
-      # Create custom table schema
+
       $tableParams = @'
-{
-    "properties": {
-        "schema": {
-               "name": "iislog_CL",
-               "columns": [
-                    {
-                        "name": "TimeGenerated",
-                        "type": "DateTime"
-                    },
-                    {
-                        "name": "cIP",
-                        "type": "string"
-                    },
-                    {
-                        "name": "scStatus",
-                        "type": "string"
-                    }
-              ]
-        },
-        "plan": "Auxiliary"
-    }
-}
-'@
-      
-      Write-Output "Creating custom table: $env:TableName"
-      Write-Output "Table Schema: $tableParams"
-      
-      # Create the table using Invoke-AzRestMethod
-      $subscriptionId = (Get-AzContext).Subscription.Id
-      $path = "/subscriptions/$subscriptionId/resourcegroups/$env:ResourceGroupName/providers/microsoft.operationalinsights/workspaces/$env:WorkspaceName/tables/$env:TableName?api-version=2023-01-01-preview"
-      
-      try {
-        $response = Invoke-AzRestMethod -Path $path -Method PUT -Payload $tableParams
-        Write-Output "Custom table created successfully"
-        Write-Output "Response Status Code: $($response.StatusCode)"
-        $DeploymentScriptOutputs = @{}
-        $DeploymentScriptOutputs['tableName'] = $env:TableName
-        $DeploymentScriptOutputs['status'] = 'Success'
-        $DeploymentScriptOutputs['statusCode'] = $response.StatusCode
-      } catch {
-        Write-Error "Failed to create custom table: $_"
-        throw
+      {
+          "properties": {
+              "schema": {
+                    "name": "iislog_CL",
+                    "columns": [
+                          {
+                              "name": "TimeGenerated",
+                              "type": "DateTime"
+                          },
+                          {
+                              "name": "cIP",
+                              "type": "string"
+                          },
+                          {
+                              "name": "scStatus",
+                              "type": "string"
+                          }
+                    ]
+              },
+              "plan": "Auxiliary"
+          }
       }
+'@
+
+      Invoke-AzRestMethod -Path "/subscriptions/027d0d66-cd43-43d8-8b69-6a6c067635dc/resourcegroups/rg-blog20251117/providers/microsoft.operationalinsights/workspaces/logaplan-law/tables/iislog_CL?api-version=2023-01-01-preview" -Method PUT -payload $tableParams
+      
+ 
     '''
   }
   dependsOn: [
     roleAssignment
+    logAnalyticsWorkspace
   ]
 }
 
-// Get reference to the VM resource
-resource vm 'Microsoft.Compute/virtualMachines@2024-03-01' existing = {
-  name: windowsVM.outputs.name
-}
+// // Get reference to the VM resource
+// resource vm 'Microsoft.Compute/virtualMachines@2024-03-01' existing = {
+//   name: windowsVM.outputs.name
+// }
 
-// Create Data Collection Endpoint
-resource dataCollectionEndpoint 'Microsoft.Insights/dataCollectionEndpoints@2022-06-01' = {
-  name: '${prefix}-dce'
-  location: location
-  properties: {
-    networkAcls: {
-      publicNetworkAccess: 'Enabled'
-    }
-  }
-}
+// // Create Data Collection Endpoint
+// resource dataCollectionEndpoint 'Microsoft.Insights/dataCollectionEndpoints@2022-06-01' = {
+//   name: '${prefix}-dce'
+//   location: location
+//   properties: {
+//     networkAcls: {
+//       publicNetworkAccess: 'Enabled'
+//     }
+//   }
+// }
 
 // Create Data Collection Rule
 resource dataCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' = {
   name: '${prefix}-dcr'
   location: location
   properties: {
-    dataCollectionEndpointId: dataCollectionEndpoint.id
+    // dataCollectionEndpointId: dataCollectionEndpoint.id
     streamDeclarations: {
       'Custom-IISLogStream': {
         columns: [
@@ -282,15 +317,16 @@ resource dataCollectionRule 'Microsoft.Insights/dataCollectionRules@2022-06-01' 
   ]
 }
 
-// Associate Data Collection Rule with VM
-resource dataCollectionRuleAssociation 'Microsoft.Insights/dataCollectionRuleAssociations@2022-06-01' = {
-  name: '${prefix}-dcra'
-  scope: vm
-  properties: {
-    dataCollectionRuleId: dataCollectionRule.id
-    description: 'Association between DCR and VM'
-  }
-}
+// // Associate Data Collection Rule with VM
+// resource dataCollectionRuleAssociation 'Microsoft.Insights/dataCollectionRuleAssociations@2022-06-01' = {
+//   name: '${prefix}-dcra'
+//   scope: windowsVM
+//   properties: {
+//     dataCollectionRuleId: dataCollectionRule.id
+//     description: 'Association between DCR and VM'
+//   }
+// }
+
 
 // Outputs
 output virtualNetworkId string = vnet.outputs.resourceId
@@ -299,4 +335,5 @@ output logAnalyticsWorkspaceId string = logAnalyticsWorkspace.id
 output logAnalyticsWorkspaceName string = logAnalyticsWorkspace.name
 output customTableName string = customTableName
 output dataCollectionRuleName string = dataCollectionRule.name
-output dataCollectionEndpointName string = dataCollectionEndpoint.name
+// output dataCollectionEndpointName string = dataCollectionEndpoint.name
+output storageAccountName string = storageAccount.name
