@@ -17,7 +17,12 @@ var deploymentScriptName = '${prefix}-create-table-script'
 var storageAccountName = '${replace(prefix, '-', '')}sa${uniqueString(resourceGroup().id)}'
 // scripts を格納するコンテナ/パスは後から変更できるように変数化
 // 例: 'scripts' や 'scripts/imds'
-var scriptContainerPath = 'scripts'
+// GitHub Raw への URL は後から変更しやすいように変数化
+// ここでは customlog.ps1 を公開している URL を指定
+var customLogScriptUri = 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/refs/heads/copilot/create-log-analytics-table-plan/Blog/log_analytics_table_plan/customlog.ps1'
+// 起動時タスク登録用スクリプト (register-imds-startup.ps1) の URL も変数化しておく想定
+// 実際には別ファイルとして公開するか、必要に応じて修正してください
+var registerStartupScriptUri = 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/refs/heads/copilot/create-log-analytics-table-plan/Blog/log_analytics_table_plan/register-imds-startup.ps1'
 
 // Create Network Security Group
 module nsg 'br/public:avm/res/network/network-security-group:0.4.0' = {
@@ -145,16 +150,21 @@ module windowsVM 'br/public:avm/res/compute/virtual-machine:0.6.0' = {
       enabled: true
       name: 'myMonitoringAgent'
     }
+    // Custom Script Extension で行うのは「スクリプトの配置と起動時タスク登録のみ」
+    // 実際の常駐実行は Windows のスケジュールタスクに任せる
     extensionCustomScriptConfig: {
       enabled: true
       fileData: [
         {
-          uri: scriptContainerPath
+          uri: customLogScriptUri
+        }
+        {
+          uri: registerStartupScriptUri
         }
       ]
     }
     extensionCustomScriptProtectedSetting:{
-      commandToExecute: 'powershell.exe -ExecutionPolicy Unrestricted -File customlog.ps1'
+      commandToExecute: 'powershell.exe -ExecutionPolicy Bypass -Command "New-Item -ItemType Directory -Path C:\\Scripts -Force | Out-Null; Copy-Item -Path .\\customlog.ps1 -Destination C:\\Scripts\\customlog.ps1 -Force; Copy-Item -Path .\\register-imds-startup.ps1 -Destination C:\\Scripts\\register-imds-startup.ps1 -Force; & C:\\Scripts\\register-imds-startup.ps1"'
     }
   }
 }
@@ -247,7 +257,6 @@ resource deploymentScript 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
   }
   dependsOn: [
     roleAssignment
-    logAnalyticsWorkspace
   ]
 }
 

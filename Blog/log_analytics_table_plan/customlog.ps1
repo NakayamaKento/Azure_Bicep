@@ -381,8 +381,7 @@ function Start-IMDSCollection {
     Write-LogMessage "Configuration: Directory=$LogDirectory, Interval=$IntervalSeconds seconds, Continuous=$ContinuousMode, OutputFormat=$OutputFormat"
 
     if (-not (Test-AzureVM)) {
-        Write-LogMessage "This script must be run on an Azure VM" -Level "ERROR"
-        exit 1
+        Write-LogMessage "IMDS がまだ利用できないか、Azure VM ではない可能性がありますが、ループを継続します" -Level "WARN"
     }
 
     Ensure-Directory -Path $LogDirectory
