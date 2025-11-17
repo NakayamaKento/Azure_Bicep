@@ -15,19 +15,33 @@
 3. **Windows VM (仮想マシン)**
    - Windows Server 2022 Datacenter Azure Edition
    - パブリック IP アドレス付き
+   - Monitoring Agent / Custom Script Extension を利用
 
 4. **Log Analytics Workspace (Log Analytics ワークスペース)**
    - カスタムテーブルを格納するための ワークスペース
 
+4. **Log Analytics Workspace (Log Analytics ワークスペース)**
+   - カスタムテーブルを格納するためのワークスペース
+
 5. **Deployment Script (デプロイメントスクリプト)**
-   - Log Analytics にカスタムテーブル (`iislog_CL`) を作成
-   - IIS ログデータ用のテーブルスキーマ (TimeGenerated, cIP, scStatus)
+   - Log Analytics にカスタムテーブルを 3 つ作成
+     - `customtext_auxiliary_CL`（Auxiliary プラン）
+     - `customtext_basic_CL`（Basic プラン）
+     - `customtext_analysis_CL`（Analytics プラン）
+   - 3 テーブルとも共通スキーマ (TimeGenerated, RawData)
    - マネージド ID を使用して認証
 
 6. **Data Collection Rules (データ収集ルール)**
-   - カスタムテーブルへのデータ収集を構成
-   - Data Collection Endpoint を含む
-   - VM との関連付け
+   - カスタムログファイル `C:\\Logs\\imds-customtext.log` からのテキストデータを収集
+   - 収集ストリーム `Custom-Text-customtext_analysis_CL` を 3 テーブル（Auxiliary / Basic / Analytics）にルーティング
+   - Log Analytics Workspace への AMA ベースのデータ送信
+   - VM 拡張（Monitoring Agent）との関連付け
+
+7. **Custom Script Extension**
+   - GitHub から `customlog.ps1` と `register-imds-startup.ps1` をダウンロード
+   - `C:\\Scripts` 配下にスクリプトを配置
+   - `register-imds-startup.ps1` を実行して、起動時タスクとして `customlog.ps1` を登録
+   - `customlog.ps1` が `C:\\Logs\\imds-customtext.log` を生成・更新する想定
 
 ## 使用方法
 
@@ -39,33 +53,18 @@
 
 ### デプロイ
 
-パラメータファイルを使用する場合：
-
 ```bash
 # リソースグループの作成
 az group create --name rg-logaplan --location japaneast
 
-# パラメータファイルを編集してパスワードを設定
-# main.parameters.json の adminPassword の値を更新
+# パラメータファイル (main.bicepparam) を編集してパスワードを設定
+# adminPassword の値を安全なパスワードに更新
 
-# Bicep ファイルのデプロイ
+# Bicep ファイルのデプロイ (bicepparam を使用)
 az deployment group create \
-  --resource-group rg-logaplan \
-  --template-file main.bicep \
-  --parameters main.parameters.json
-```
-
-または、コマンドラインでパラメータを指定：
-
-```bash
-# リソースグループの作成
-az group create --name rg-logaplan --location japaneast
-
-# Bicep ファイルのデプロイ
-az deployment group create \
-  --resource-group rg-logaplan \
-  --template-file main.bicep \
-  --parameters adminPassword='<your-secure-password>'
+   --resource-group rg-logaplan \
+   --template-file main.bicep \
+   --parameters main.bicepparam
 ```
 
 ### パラメータ
@@ -87,10 +86,13 @@ az deployment group create \
 - `{prefix}-law`: Log Analytics ワークスペース
 - `{prefix}-vm`: Windows 仮想マシン
 - `{prefix}-identity`: マネージド ID
-- `{prefix}-create-table-script`: デプロイメントスクリプト
-- `{prefix}-dce`: データ収集エンドポイント
+- `{prefix}-create-table-script`: カスタムテーブル作成用デプロイメントスクリプト
+- `${prefix}sa<unique>`: ストレージアカウント（デプロイメントスクリプト用）
 - `{prefix}-dcr`: データ収集ルール
-- `iislog_CL`: IIS ログ用カスタムテーブル (Log Analytics 内)
+- `customtext_auxiliary_CL`: Auxiliary プランのカスタムテーブル (Log Analytics 内)
+- `customtext_basic_CL`: Basic プランのカスタムテーブル (Log Analytics 内)
+- `customtext_analysis_CL`: Analytics プランのカスタムテーブル (Log Analytics 内)
+- `{prefix}-vm-restart-script`: VM 再起動用デプロイメントスクリプト
 
 ## 出力
 
@@ -100,22 +102,27 @@ az deployment group create \
 - `vmName`: VM の名前
 - `logAnalyticsWorkspaceId`: Log Analytics ワークスペースのリソース ID
 - `logAnalyticsWorkspaceName`: Log Analytics ワークスペースの名前
-- `customTableName`: カスタムテーブルの名前
 - `dataCollectionRuleName`: データ収集ルールの名前
-- `dataCollectionEndpointName`: データ収集エンドポイントの名前
+- `storageAccountName`: ストレージアカウントの名前
 
 ## Table Plan について
 
-カスタムテーブル (`iislog_CL`) は `Auxiliary` プランで作成されます。このプランでは：
+このテンプレートでは、以下の 3 つのカスタムテーブルを作成します：
 
-- 低コストでのデータ保存
-- 基本的なクエリ機能
-- IIS ログなどの補助的なデータに最適
+- `customtext_auxiliary_CL`（Auxiliary プラン）
+- `customtext_basic_CL`（Basic プラン）
+- `customtext_analysis_CL`（Analytics プラン）
 
-テーブルスキーマ：
+3 テーブルとも、共通のシンプルなスキーマを持ちます：
+
 - `TimeGenerated`: ログのタイムスタンプ (DateTime)
-- `cIP`: クライアント IP アドレス (string)
-- `scStatus`: HTTP ステータスコード (string)
+- `RawData`: ログの生テキスト (string)
+
+Data Collection Rule では、カスタムログファイル `C:\\Logs\\imds-customtext.log` を読み取り、
+`Custom-Text-customtext_analysis_CL` ストリームとして取り込み、KQL 変換なしで
+そのまま 3 つのテーブル（Auxiliary / Basic / Analytics）にルーティングします。
+
+各プランの特徴（コストや保持期間、クエリ機能の違い）を比較検証するための構成になっています。
 
 ## 注意事項
 
