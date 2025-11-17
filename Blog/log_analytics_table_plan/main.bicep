@@ -32,21 +32,7 @@ module nsg 'br/public:avm/res/network/network-security-group:0.4.0' = {
   params: {
     name: '${prefix}-nsg'
     location: location
-    securityRules: [
-      {
-        name: 'AllowRDP'
-        properties: {
-          protocol: 'Tcp'
-          sourcePortRange: '*'
-          destinationPortRange: '3389'
-          sourceAddressPrefix: '*'
-          destinationAddressPrefix: '*'
-          access: 'Allow'
-          priority: 1000
-          direction: 'Inbound'
-        }
-      }
-    ]
+    securityRules: []
   }
 }
 

@@ -13,7 +13,7 @@ graph TB
     subgraph "Azure リソースグループ"
         subgraph "ネットワーク"
             VNet["Virtual Network<br/>10.0.0.0/16"]
-            NSG["Network Security Group<br/>(RDP 許可)"]
+            NSG["Network Security Group"]
             VNet -->|関連付け| NSG
         end
         
@@ -90,7 +90,7 @@ graph TB
    - サブネット付きの VNet を作成
 
 2. **Network Security Group (ネットワークセキュリティグループ)**
-   - RDP アクセスを許可するルール付き
+   - デフォルトルールのみ（カスタムルールなし）
 
 3. **Windows VM (仮想マシン)**
    - Windows Server 2022 Datacenter Azure Edition
@@ -234,7 +234,7 @@ sequenceDiagram
 ## 注意事項
 
 - **デプロイメントスクリプト**: マネージド ID を使用して Azure REST API を呼び出します
-- **セキュリティ**: VM には RDP アクセスが可能ですが、本番環境では適切なセキュリティ対策を実施してください
+- **セキュリティ**: NSG にはカスタムルールが設定されていません。必要に応じてアクセスルールを追加してください
 - **カスタマイズ**: カスタムテーブルのスキーマは、要件に応じてカスタマイズできます
 - **Data Collection Endpoint**: 最新の Data Collection Rules では、カスタムログ収集時に Data Collection Endpoint は不要です（このテンプレートでは使用していません）
 - **VM 再起動**: デプロイ後、VM が自動的に再起動され、スケジュールタスクが有効になります
@@ -250,7 +250,7 @@ sequenceDiagram
    ```
 
 2. **ログファイルの生成を確認**
-   - VM に RDP 接続
+   - VM に接続（Azure Bastion または Serial Console を使用）
    - `C:\Logs\imds-customtext.log` が存在するか確認
 
 3. **Azure Monitor Agent の状態を確認**
