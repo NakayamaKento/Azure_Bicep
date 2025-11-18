@@ -66,6 +66,8 @@ graph TB
             DeployScript -->|REST API 呼び出し| LAW
             DeployScript -->|利用| SA
             RestartScript -->|VM 再起動| VM
+            RestartScript -->|利用| SA
+            RestartScript -->|使用| ManagedID
         end
     end
     

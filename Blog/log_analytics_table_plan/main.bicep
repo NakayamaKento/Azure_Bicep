@@ -21,10 +21,10 @@ var storageAccountName = '${replace(prefix, '-', '')}sa${uniqueString(resourceGr
 // 例: 'scripts' や 'scripts/imds'
 // GitHub Raw への URL は後から変更しやすいように変数化
 // ここでは customlog.ps1 を公開している URL を指定
-var customLogScriptUri = 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/refs/heads/copilot/create-log-analytics-table-plan/Blog/log_analytics_table_plan/customlog.ps1'
+var customLogScriptUri = 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/refs/heads/main/Blog/log_analytics_table_plan/customlog.ps1'
 // 起動時タスク登録用スクリプト (register-imds-startup.ps1) の URL も変数化しておく想定
 // 実際には別ファイルとして公開するか、必要に応じて修正してください
-var registerStartupScriptUri = 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/refs/heads/copilot/create-log-analytics-table-plan/Blog/log_analytics_table_plan/register-imds-startup.ps1'
+var registerStartupScriptUri = 'https://raw.githubusercontent.com/NakayamaKento/Azure_Bicep/refs/heads/main/Blog/log_analytics_table_plan/register-imds-startup.ps1'
 
 // Create Network Security Group
 module nsg 'br/public:avm/res/network/network-security-group:0.4.0' = {
@@ -393,7 +393,6 @@ resource dataCollectionRule 'Microsoft.Insights/dataCollectionRules@2023-03-11' 
     deploymentScript
   ]
 }
-
 
 resource vmRestart 'Microsoft.Resources/deploymentScripts@2023-08-01' = {
   name: '${prefix}-vm-restart-script'
